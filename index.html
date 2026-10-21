@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<!-- ============================================================
+  रंग भरो — Kids Coloring Book PWA
+  Version : v1.0.0  (2026-10-21)
+  Repo    : ankushchhajed7-cmd/RANG-BHARO
+  Notes   : 227 built-in pictures (animals, birds, sea, cartoon,
+            bhakti, nature, vehicles, fruits, toys, ABC, 1-10, स्वर),
+            tap-to-fill + drag-color-to-fill, pinch zoom, undo,
+            auto-save, share/save PNG, photo-of-book-page mode.
+============================================================ -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>रंग भरो — Kids Coloring</title>
+<meta name="theme-color" content="#2D2A5A">
+<meta name="description" content="बच्चों के लिए रंग भरने की किताब — 200+ चित्र">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+:root{
+  --bg:#FFF7EC; --ink:#2D2A5A; --ink2:#6B6890; --card:#FFFFFF; --line:#EFE6D8;
+  --coral:#FF6B4A; --sun:#FFC233; --teal:#17B3A3; --violet:#7B61FF;
+  --shadow:0 6px 18px rgba(45,42,90,.10), 0 1px 3px rgba(45,42,90,.08);
+  --r:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Baloo 2",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;overscroll-behavior:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+.hide{display:none!important}
+
+/* ---------- Home ---------- */
+#home{min-height:100%;padding-bottom:40px}
+.hero{background:linear-gradient(135deg,#2D2A5A 0%,#4A3F9B 60%,#6B4FC8 100%);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 16px 54px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset:auto -40px -60px auto;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,194,51,.35),transparent 70%)}
+.hero .row{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.logo{width:52px;height:52px;border-radius:16px;background:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.18);flex:none}
+.logo svg{width:40px;height:40px}
+.hero h1{margin:0;font-size:28px;line-height:1;font-weight:800;letter-spacing:.3px}
+.hero p{margin:4px 0 0;font-size:14px;opacity:.85;font-weight:500}
+.hero .sp{flex:1}
+.hbtn{height:40px;min-width:40px;padding:0 12px;border-radius:14px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:6px;backdrop-filter:blur(4px)}
+.hbtn.install{background:var(--sun);color:var(--ink)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px 12px;margin-top:-34px;position:sticky;top:0;z-index:5;scrollbar-width:none;background:linear-gradient(var(--bg) 70%,transparent)}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:42px;padding:0 16px;border-radius:21px;background:var(--card);box-shadow:var(--shadow);font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;white-space:nowrap;color:var(--ink)}
+.chip.on{background:var(--coral);color:#fff}
+.chip .e{font-size:18px}
+.meta{padding:2px 18px 8px;color:var(--ink2);font-size:14px;font-weight:600;display:flex;justify-content:space-between}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;padding:4px 16px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;position:relative;text-align:left;transition:transform .12s}
+.card:active{transform:scale(.97)}
+.card .th{aspect-ratio:1;background:#fff;display:block;width:100%;border-bottom:1px solid var(--line)}
+.card .nm{padding:7px 12px 9px;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .done{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-size:15px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.card .del{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:rgba(45,42,90,.75);color:#fff;font-size:16px;display:grid;place-items:center}
+.card.add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;aspect-ratio:auto;min-height:190px;background:linear-gradient(135deg,#FFE7D6,#FFF3C9);border:2px dashed #FFB38E;box-shadow:none;text-align:center;padding:14px}
+.card.add .big{font-size:44px}
+.card.add b{font-size:16px}
+.card.add small{color:var(--ink2);font-size:13px;line-height:1.3}
+.foot{text-align:center;color:var(--ink2);font-size:12px;padding:24px 0 8px;opacity:.8}
+
+/* ---------- Paint ---------- */
+#paint{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:20}
+.bar{display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 10px 8px;background:var(--card);box-shadow:0 2px 10px rgba(45,42,90,.08);z-index:3}
+.ib{width:44px;height:44px;border-radius:14px;background:#F4EFFA;display:grid;place-items:center;font-size:20px;color:var(--ink);flex:none}
+.ib:active{transform:scale(.93)}
+.ib:disabled{opacity:.35}
+.ib svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ib.pri{background:var(--coral)}.ib.pri svg{stroke:#fff}
+.ttl{flex:1;min-width:0;font-weight:800;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+#stage{flex:1;position:relative;overflow:hidden;touch-action:none;display:grid;place-items:center}
+#zoomBox{transform-origin:0 0;position:absolute;left:0;top:0;will-change:transform}
+#view{display:block;background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(45,42,90,.15);touch-action:none}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:64px;border-radius:14px;background:rgba(255,255,255,.92);box-shadow:var(--shadow);font-size:26px;font-weight:800;color:var(--ink);display:grid;place-items:center;z-index:2}
+#prev{left:4px}#next{right:4px}
+#zreset{position:absolute;right:12px;bottom:12px;height:40px;padding:0 14px;border-radius:20px;background:var(--ink);color:#fff;font-weight:700;font-size:14px;z-index:2;box-shadow:var(--shadow)}
+.tray{background:var(--card);border-radius:26px 26px 0 0;box-shadow:0 -6px 20px rgba(45,42,90,.10);padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:3}
+.cur{display:flex;align-items:center;gap:10px;padding:0 16px 8px;font-weight:700;font-size:15px;color:var(--ink2)}
+.cur i{width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);flex:none}
+.cur span{flex:1}
+.pal{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,52px);gap:10px;overflow-x:auto;padding:4px 16px 6px;scrollbar-width:none}
+.pal::-webkit-scrollbar{display:none}
+.sw{width:52px;height:52px;border-radius:50%;position:relative;box-shadow:inset 0 -5px 0 rgba(0,0,0,.14),0 2px 5px rgba(0,0,0,.12);touch-action:pan-x;transition:transform .12s}
+.sw.on{transform:scale(1.08);box-shadow:0 0 0 4px #fff,0 0 0 7px var(--ink)}
+.sw.white{border:2px solid var(--line)}
+.sw.white:after{content:"🧽";position:absolute;inset:0;display:grid;place-items:center;font-size:22px}
+.sw.magic{background:conic-gradient(#ff4d4d,#ffb300,#ffee58,#43d17a,#2fa8ff,#8a5cff,#ff4da6,#ff4d4d)}
+.sw.magic:after{content:"✨";position:absolute;inset:0;display:grid;place-items:center;font-size:22px}
+#ghost{position:fixed;width:64px;height:64px;border-radius:50%;pointer-events:none;z-index:50;transform:translate(-50%,-80%);box-shadow:0 8px 20px rgba(0,0,0,.25);border:4px solid #fff}
+
+/* ---------- Misc ---------- */
+#toast{position:fixed;left:50%;bottom:calc(200px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:16px;font-weight:600;font-size:15px;z-index:60;max-width:88vw;text-align:center;box-shadow:var(--shadow);transition:opacity .3s}
+.modal{position:fixed;inset:0;background:rgba(30,27,60,.45);display:grid;place-items:center;z-index:70;padding:20px}
+.modal .box{background:#fff;border-radius:24px;padding:22px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 6px;font-size:21px}
+.modal p{margin:0 0 18px;color:var(--ink2);font-size:15px}
+.modal .btns{display:flex;gap:10px}
+.modal .btns button{flex:1;height:48px;border-radius:16px;font-weight:800;font-size:16px;background:#F4EFFA}
+.modal .btns .ok{background:var(--coral);color:#fff}
+.burst{position:fixed;pointer-events:none;z-index:40;font-size:22px;animation:fly .9s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0}}
+.cropm{position:fixed;inset:0;background:#1E1B3C;z-index:75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+.cropm .ch{color:#fff;font-weight:800;font-size:18px}
+.cropm .cw{position:relative;touch-action:none}
+.cropm canvas{display:block;border-radius:6px}
+.cropm i{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:var(--sun);border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.cropm .btns{display:flex;gap:12px;width:100%;max-width:360px}
+.cropm .btns button{flex:1;height:50px;border-radius:16px;font-weight:800;font-size:16px;background:#3A3670;color:#fff}
+.cropm .btns .ok{background:var(--coral)}
+#busy{position:fixed;inset:0;background:rgba(255,247,236,.85);display:grid;place-items:center;z-index:80;font-weight:800;font-size:18px}
+</style>
+</head>
+<body>
+<!-- ============ HOME ============ -->
+<div id="home">
+  <div class="hero">
+    <div class="row">
+      <div class="logo"><svg viewBox="0 0 64 64"><path d="M32 6C17 6 6 17 6 31c0 12 9 21 20 21 4 0 5-2 5-4 0-3-3-4-3-7 0-3 3-5 6-5h7c10 0 17-6 17-15C58 13 46 6 32 6z" fill="#FFE2B8" stroke="#2D2A5A" stroke-width="3"/><circle cx="19" cy="27" r="5" fill="#FF6B4A"/><circle cx="27" cy="16" r="5" fill="#FFC233"/><circle cx="40" cy="15" r="5" fill="#17B3A3"/><circle cx="49" cy="25" r="5" fill="#7B61FF"/></svg></div>
+      <div><h1>रंग भरो</h1><p>बच्चों की रंगीन ड्रॉइंग बुक</p></div>
+      <div class="sp"></div>
+      <button class="hbtn install hide" id="installBtn">📲 इंस्टॉल</button>
+      <button class="hbtn" id="soundBtn" aria-label="sound">🔊</button>
+    </div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="meta"><span id="countTxt"></span><span id="doneTxt"></span></div>
+  <div class="grid" id="grid"></div>
+  <div class="foot">रंग भरो v1.0.0 · Ankush New Vision</div>
+  <input type="file" id="photoIn" accept="image/*" class="hide">
+</div>
+
+<!-- ============ PAINT ============ -->
+<div id="paint" class="hide">
+  <div class="bar">
+    <button class="ib" id="backBtn" aria-label="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="ttl" id="pTitle"></div>
+    <button class="ib" id="undoBtn" aria-label="undo"><svg viewBox="0 0 24 24"><path d="M9 7H4V2"/><path d="M4 7a9 9 0 1 1-1 8"/></svg></button>
+    <button class="ib" id="clearBtn" aria-label="clear"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></button>
+    <button class="ib pri" id="shareBtn" aria-label="save"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg></button>
+  </div>
+  <div id="stage">
+    <div id="zoomBox"><canvas id="view" width="1000" height="1000"></canvas></div>
+    <button class="nav" id="prev">‹</button>
+    <button class="nav" id="next">›</button>
+    <button id="zreset" class="hide">⤢ पूरा चित्र</button>
+  </div>
+  <div class="tray">
+    <div class="cur"><i id="curDot"></i><span id="curName"></span></div>
+    <div class="pal" id="pal"></div>
+  </div>
+</div>
+<div id="ghost" class="hide"></div>
+<div id="toast" class="hide"></div>
+
+<script>
+/* ===== Rang Bharo picture library — core helpers =====
+   Every subject is drawn in a 400x400 box (ground ≈ y 395).
+   Closed shapes are white-filled with dark outline, so later shapes hide earlier ones.
+   Class o = open line (no fill), k = solid dark, w = white highlight without outline,
+   b1/b2 = "tube" outline trick (thick dark + thinner white on top). */
+const f = n => +(+n).toFixed(1);
+const A = o => Object.entries(o).map(([k, v]) => (v === undefined || v === null || v === false) ? '' : ` ${k}="${typeof v === 'number' ? f(v) : v}"`).join('');
+const rot = (a, x, y) => a ? `rotate(${f(a)} ${f(x)} ${f(y)})` : null;
+const C = (cx, cy, r, c) => `<circle${A({ cx, cy, r, class: c })}/>`;
+const E = (cx, cy, rx, ry, a = 0, c) => `<ellipse${A({ cx, cy, rx, ry, class: c, transform: rot(a, cx, cy) })}/>`;
+const R = (x, y, width, height, rx = 0, c, a = 0) => `<rect${A({ x, y, width, height, rx: rx || null, class: c, transform: rot(a, x + width / 2, y + height / 2) })}/>`;
+const P = (d, c) => `<path${A({ d, class: c })}/>`;
+const L = d => P(d, 'o');
+const K = (x, y, r = 9) => C(x, y, r, 'k') + C(x + r * 0.35, y - r * 0.35, r * 0.3, 'w');
+const G = (t, s) => `<g transform="${t}">${s}</g>`;
+const poly = (pts, c) => `<polygon${A({ points: pts.map(p => f(p[0]) + ',' + f(p[1])).join(' '), class: c })}/>`;
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const TX = (x, y, size, txt, cls = 't') => `<text${A({ x, y, 'font-size': size, 'text-anchor': 'middle', class: cls })}>${esc(txt)}</text>`;
+const tube = (d, w = 40) => `<path d="${d}" class="b1" style="stroke-width:${w + 7}"/><path d="${d}" class="b2" style="stroke-width:${w}"/>`;
+const smile = (x, y, w = 24, h = 12) => L(`M${x - w} ${y} Q${x} ${y + h * 2} ${x + w} ${y}`);
+const cheeks = (x1, x2, y, rx = 16, ry = 9) => E(x1, y, rx, ry) + E(x2, y, rx, ry);
+const mirror = s => G('translate(400 0) scale(-1 1)', s);
+
+function bumps(cx, cy, rx, ry, n, a0 = 0, k = 0.62) {
+  const pts = [];
+  for (let i = 0; i <= n; i++) { const a = a0 + i * 2 * Math.PI / n; pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]); }
+  let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
+  for (let i = 1; i <= n; i++) {
+    const ch = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    d += ` A${f(ch * k)} ${f(ch * k)} 0 0 1 ${f(pts[i][0])} ${f(pts[i][1])}`;
+  }
+  return d + 'Z';
+}
+const Bp = (cx, cy, rx, ry, n, a0, k) => P(bumps(cx, cy, rx, ry, n, a0, k));
+function starPts(cx, cy, R1, r1, n = 5, a0 = -90) {
+  const p = [];
+  for (let i = 0; i < n * 2; i++) { const a = (a0 + i * 180 / n) * Math.PI / 180, rr = i % 2 ? r1 : R1; p.push([cx + rr * Math.cos(a), cy + rr * Math.sin(a)]); }
+  return p;
+}
+const star = (cx, cy, R1, r1, n, a0) => poly(starPts(cx, cy, R1, r1 || R1 * 0.45, n, a0));
+function flower(cx, cy, r, n = 6, a0 = 0) {
+  let s = '';
+  for (let i = 0; i < n; i++) { const a = a0 + i * 2 * Math.PI / n; s += E(cx + r * 0.62 * Math.cos(a), cy + r * 0.62 * Math.sin(a), r * 0.5, r * 0.3, a * 180 / Math.PI); }
+  return s + C(cx, cy, r * 0.32);
+}
+const heart = (cx, cy, s) => P(`M${cx} ${cy + s * 0.9} C${cx - s * 1.4} ${cy + s * 0.05} ${cx - s * 0.95} ${cy - s * 1.0} ${cx} ${cy - s * 0.35} C${cx + s * 0.95} ${cy - s * 1.0} ${cx + s * 1.4} ${cy + s * 0.05} ${cx} ${cy + s * 0.9}Z`);
+const cloud = (cx, cy, w) => P(`M${cx - w * 0.5} ${cy + w * 0.12} A${w * 0.16} ${w * 0.16} 0 0 1 ${cx - w * 0.36} ${cy - w * 0.1} A${w * 0.2} ${w * 0.2} 0 0 1 ${cx - w * 0.02} ${cy - w * 0.2} A${w * 0.18} ${w * 0.18} 0 0 1 ${cx + w * 0.32} ${cy - w * 0.08} A${w * 0.15} ${w * 0.15} 0 0 1 ${cx + w * 0.5} ${cy + w * 0.12}Z`);
+function sun(cx, cy, r, rays = 10) {
+  let d = '';
+  for (let i = 0; i < rays; i++) { const a = i * 2 * Math.PI / rays; d += `M${f(cx + Math.cos(a) * (r + 14))} ${f(cy + Math.sin(a) * (r + 14))} L${f(cx + Math.cos(a) * (r + 44))} ${f(cy + Math.sin(a) * (r + 44))} `; }
+  return L(d) + C(cx, cy, r);
+}
+const grass = (x, y, s = 1) => L(`M${x - 22 * s} ${y} L${x - 30 * s} ${y - 28 * s} M${x - 8 * s} ${y} L${x - 8 * s} ${y - 38 * s} M${x + 8 * s} ${y} L${x + 14 * s} ${y - 32 * s} M${x + 22 * s} ${y} L${x + 34 * s} ${y - 22 * s}`);
+const smallFlower = (x, y, r = 26) => L(`M${x} ${y + r} L${x} ${y + r * 3}`) + E(x - r * 0.6, y + r * 2.3, r * 0.5, r * 0.25, -30) + flower(x, y, r, 5);
+const flake = (x, y, r) => L(`M${x - r} ${y} L${x + r} ${y} M${x - r / 2} ${y - r * 0.87} L${x + r / 2} ${y + r * 0.87} M${x - r / 2} ${y + r * 0.87} L${x + r / 2} ${y - r * 0.87}`);
+const bird = (x, y, s = 1) => L(`M${x - 22 * s} ${y} Q${x - 11 * s} ${y - 14 * s} ${x} ${y} Q${x + 11 * s} ${y - 14 * s} ${x + 22 * s} ${y}`);
+const tree = (x, y, s = 1) => R(x - 14 * s, y - 90 * s, 28 * s, 90 * s, 4) + Bp(x, y - 140 * s, 70 * s, 62 * s, 9);
+const pine = (x, y, s = 1) => R(x - 10 * s, y - 30 * s, 20 * s, 30 * s) + poly([[x - 55 * s, y - 30 * s], [x + 55 * s, y - 30 * s], [x, y - 110 * s]]) + poly([[x - 42 * s, y - 85 * s], [x + 42 * s, y - 85 * s], [x, y - 160 * s]]);
+const bubble = (x, y, r) => C(x, y, r) + L(`M${x - r * 0.5} ${y - r * 0.1} Q${x - r * 0.45} ${y - r * 0.5} ${x - r * 0.1} ${y - r * 0.55}`);
+const seaweed = (x, y, h, s = 1) => P(`M${x} ${y} Q${x - 30 * s} ${y - h * 0.3} ${x} ${y - h * 0.55} Q${x + 30 * s} ${y - h * 0.8} ${x} ${y - h} Q${x + 45 * s} ${y - h * 0.75} ${x + 18 * s} ${y - h * 0.5} Q${x - 8 * s} ${y - h * 0.28} ${x + 22 * s} ${y}Z`);
+const shell = (x, y, s = 1) => P(`M${x - 30 * s} ${y} Q${x - 34 * s} ${y - 40 * s} ${x} ${y - 44 * s} Q${x + 34 * s} ${y - 40 * s} ${x + 30 * s} ${y}Z`) + L(`M${x} ${y} L${x} ${y - 42 * s} M${x} ${y} L${x - 18 * s} ${y - 36 * s} M${x} ${y} L${x + 18 * s} ${y - 36 * s}`);
+
+/* ===== Backgrounds (1000x1000). Keep decoration in the top band / side margins. ===== */
+const FR = R(18, 18, 964, 964, 36);
+const BG = {
+  meadow: () => FR + sun(140, 140, 60) + cloud(720, 150, 260) + cloud(470, 95, 160) + L('M18 760 Q260 690 520 740 Q760 790 982 720') + grass(80, 900) + grass(930, 880) + smallFlower(85, 790, 24) + smallFlower(915, 780, 22) + grass(60, 975, 0.8) + grass(950, 975, 0.8),
+  sky: () => FR + cloud(200, 170, 240) + cloud(780, 120, 220) + cloud(560, 260, 150) + sun(880, 290, 45, 8) + bird(390, 110) + bird(450, 140, 0.8) + bird(110, 330, 0.8) + L('M18 860 Q200 790 400 850 Q620 910 780 840 Q890 800 982 830'),
+  farm: () => FR + sun(860, 130, 55) + cloud(300, 120, 220) + P('M40 560 L40 420 L110 350 L180 420 L180 560 Z') + R(80, 470, 60, 90) + L('M80 470 L140 560 M140 470 L80 560') + L('M18 700 L982 700') + R(820, 610, 14, 120) + R(900, 610, 14, 120) + R(805, 635, 175, 18) + R(805, 680, 175, 18) + grass(90, 940) + grass(920, 950) + grass(500, 975, 0.7),
+  jungle: () => FR + R(40, 120, 50, 860) + Bp(70, 140, 120, 90, 9) + R(900, 200, 50, 780) + Bp(925, 190, 110, 90, 9) + E(160, 830, 90, 30, -40) + E(840, 850, 90, 30, 40) + E(130, 920, 80, 25, -15) + L('M180 40 Q260 140 230 260 M780 40 Q720 160 760 240') + E(232, 268, 16, 26) + E(762, 248, 16, 26) + grass(500, 975, 0.7),
+  snow: () => FR + C(160, 140, 50) + L('M18 690 Q300 610 560 680 Q800 740 982 660') + pine(90, 700, 1.1) + pine(920, 690, 1.0) + flake(380, 120, 24) + flake(620, 90, 20) + flake(820, 200, 22) + flake(280, 260, 16) + C(500, 220, 8) + C(700, 280, 10) + C(90, 420, 9) + C(930, 430, 8) + C(60, 880, 10) + C(940, 900, 9),
+  garden: () => FR + sun(870, 140, 55) + cloud(320, 140, 230) + (() => { let s = ''; for (let i = 0; i < 12; i++) s += poly([[30 + i * 82, 760], [30 + i * 82, 640], [52 + i * 82, 610], [74 + i * 82, 640], [74 + i * 82, 760]]); return s; })() + R(18, 665, 964, 26) + R(18, 720, 964, 26) + smallFlower(80, 850, 26) + smallFlower(930, 840, 24) + grass(160, 960) + grass(850, 960),
+  sea: () => FR + L('M18 120 Q80 90 140 120 T260 120 T380 120 T500 120 T620 120 T740 120 T860 120 T982 120') + bubble(90, 240, 26) + bubble(130, 320, 16) + bubble(900, 250, 22) + bubble(870, 330, 14) + bubble(930, 400, 10) + seaweed(70, 980, 260) + seaweed(925, 980, 230, -1) + L('M18 930 Q200 900 400 935 Q600 965 800 925 Q900 905 982 920') + shell(820, 975, 0.8) + shell(180, 975, 0.7),
+  sea2: () => FR + bubble(820, 120, 30) + bubble(870, 200, 18) + bubble(150, 150, 24) + bubble(110, 230, 14) + bubble(500, 90, 16) + Bp(110, 930, 110, 70, 7, Math.PI) + Bp(890, 940, 100, 60, 7, Math.PI) + star(230, 935, 40, 18) + seaweed(860, 900, 200) + L('M18 960 L982 960'),
+  night: () => FR + P('M140 90 A90 90 0 1 0 240 230 A70 70 0 1 1 140 90Z') + star(420, 110, 28, 12) + star(640, 170, 22, 9) + star(860, 100, 30, 13) + star(330, 260, 16, 7) + star(780, 290, 18, 8) + star(560, 70, 14, 6) + L('M18 780 Q280 720 520 770 Q780 820 982 750') + grass(90, 940) + grass(910, 950),
+  room: () => FR + R(80, 90, 230, 210, 8) + L('M195 90 L195 300 M80 195 L310 195') + P('M60 80 L330 80 Q300 150 255 170 Q200 120 195 82 Q190 120 135 170 Q90 150 60 80Z') + R(700, 110, 170, 130, 6) + C(785, 175, 40) + L('M18 760 L982 760') + R(60, 800, 150, 150, 10) + star(135, 875, 40, 18) + C(900, 900, 48) + L('M852 900 Q900 880 948 900 M900 852 Q880 900 900 948'),
+  stage: () => FR + L('M18 120 Q250 220 500 120 Q750 220 982 120') + (() => { let s = ''; for (let i = 0; i < 9; i++) { const x = 70 + i * 107, y = 120 + 52 * Math.sin(Math.PI * ((i * 107 + 52) % 482) / 482) - 0; s += poly([[x - 26, y + 26 * 0 + 2], [x + 26, y + 2], [x, y + 60]]); } return s; })() + C(90, 330, 50) + L('M90 380 Q80 450 100 520') + C(910, 360, 46) + L('M910 406 Q925 470 905 540') + R(18, 900, 964, 82) + star(160, 600, 18, 8) + star(860, 640, 18, 8),
+  space: () => FR + C(830, 170, 70) + E(830, 170, 125, 26, -15) + C(830, 170, 70) + C(150, 820, 60) + C(130, 800, 14) + C(170, 845, 10) + star(220, 150, 26, 11) + star(520, 100, 18, 8) + star(700, 360, 16, 7) + star(110, 420, 20, 9) + star(900, 760, 24, 10) + star(860, 520, 14, 6) + C(380, 220, 7) + C(640, 260, 6) + C(90, 600, 6) + C(940, 900, 7),
+  road: () => FR + cloud(220, 150, 230) + cloud(760, 120, 200) + sun(520, 110, 40, 8) + tree(110, 690, 1.2) + tree(890, 690, 1.1) + L('M18 690 L982 690') + R(18, 820, 964, 130) + R(70, 875, 110, 20, 6) + R(300, 875, 110, 20, 6) + R(530, 875, 110, 20, 6) + R(760, 875, 110, 20, 6),
+  water: () => FR + sun(150, 150, 55) + cloud(650, 140, 260) + bird(370, 220) + bird(430, 190, 0.8) + L('M18 760 Q80 735 140 760 T260 760 T380 760 T500 760 T620 760 T740 760 T860 760 T982 760') + L('M60 860 Q100 840 140 860 M260 900 Q300 880 340 900 M640 870 Q680 850 720 870 M820 930 Q860 910 900 930'),
+  border: () => FR + R(48, 48, 904, 904, 28) + flower(86, 86, 50, 6) + flower(914, 86, 50, 6) + flower(86, 914, 50, 6) + flower(914, 914, 50, 6),
+  toran: () => FR + R(48, 48, 904, 904, 28) + L('M48 110 Q500 190 952 110') + (() => { let s = ''; for (let i = 0; i < 11; i++) { const x = 92 + i * 81.6, t = (x - 48) / 904, y = 110 + 4 * 80 * t * (1 - t) + 4; s += P(`M${f(x)} ${f(y)} Q${f(x - 26)} ${f(y + 40)} ${f(x)} ${f(y + 78)} Q${f(x + 26)} ${f(y + 40)} ${f(x)} ${f(y)}Z`); } return s; })() + C(110, 880, 26) + C(890, 880, 26) + C(110, 880, 10) + C(890, 880, 10),
+  plate: () => FR + C(500, 560, 420) + C(500, 560, 360) + E(140, 120, 70, 24, -25) + E(860, 120, 70, 24, 25) + C(500, 70, 18),
+  party: () => FR + L('M18 90 Q250 200 500 100 Q750 200 982 90') + (() => { let s = ''; [[110, 128], [230, 160], [370, 140], [630, 140], [770, 160], [890, 128]].forEach(([x, y]) => s += poly([[x - 30, y - 12], [x + 30, y - 12], [x, y + 50]])); return s; })() + star(120, 860, 30, 13) + star(880, 880, 26, 11) + C(70, 700, 14) + C(940, 650, 12) + heart(110, 320, 26) + heart(895, 330, 22),
+};
+
+/* ===== Animals ===== */
+const LIB = {};
+function sit(o) {
+  let s = '';
+  // tail (behind)
+  const tails = {
+    cat: P('M285 360 Q385 370 372 270 Q366 238 346 250 Q356 330 280 330Z'),
+    dog: P('M290 330 Q360 330 350 260 Q345 245 330 255 Q335 305 285 305Z'),
+    pig: L('M302 330 q30 -6 22 -30 q-14 -10 -16 6 q2 16 26 8'),
+    lion: L('M300 340 Q370 350 360 270') + Bp(360, 258, 18, 20, 7),
+    bunny: C(305, 362, 30),
+    monkey: P('M290 350 Q390 360 380 250 Q376 210 340 215 Q320 225 335 240 Q358 236 356 262 Q360 330 285 325Z'),
+    fox: P('M280 365 Q405 380 385 250 Q375 205 345 228 Q360 330 270 320Z') + P('M385 250 Q375 205 345 228 Q362 252 380 262Z'),
+    cow: L('M300 330 Q345 320 340 260') + E(340, 250, 9, 16),
+  };
+  if (o.tail) s += tails[o.tail];
+  // body
+  s += o.fluffy ? Bp(200, 305, 115, 88, 14) : E(200, 305, 108, 88);
+  if (o.belly) s += E(200, 318, 62, 58);
+  if (o.heart) s += heart(200, 315, 30);
+  if (o.spots) s += E(130, 290, 24, 17, 20) + E(275, 320, 20, 15, -20) + E(160, 350, 14, 10);
+  if (o.stripes) s += L('M98 290 L132 296 M100 322 L134 320 M302 290 L268 296 M300 322 L266 320');
+  // feet & paws
+  s += E(148, 382, 44, 20) + E(252, 382, 44, 20);
+  if (o.hoof) s += L('M148 364 L148 400 M252 364 L252 400');
+  else s += L('M136 372 L136 392 M160 372 L160 392 M240 372 L240 392 M264 372 L264 392');
+  s += E(160, 345, 26, 36, 10) + E(240, 345, 26, 36, -10);
+  // ears behind head
+  const earsB = {
+    cat: poly([[108, 125], [118, 28], [190, 80]]) + poly([[292, 125], [282, 28], [210, 80]]) + poly([[128, 105], [133, 58], [168, 82]]) + poly([[272, 105], [267, 58], [232, 82]]),
+    fox: poly([[100, 135], [104, 10], [190, 85]]) + poly([[300, 135], [296, 10], [210, 85]]) + poly([[120, 110], [120, 45], [165, 85]]) + poly([[280, 110], [280, 45], [235, 85]]),
+    round: C(112, 80, 42) + C(288, 80, 42) + C(112, 80, 22) + C(288, 80, 22),
+    big: C(95, 95, 66) + C(305, 95, 66) + C(95, 95, 42) + C(305, 95, 42),
+    bunny: E(158, 40, 30, 86, -10) + E(242, 40, 30, 86, 10) + E(158, 48, 14, 60, -10) + E(242, 48, 14, 60, 10),
+    pig: poly([[118, 110], [100, 40], [175, 72]]) + poly([[282, 110], [300, 40], [225, 72]]),
+    cow: E(82, 128, 46, 22, -20) + E(318, 128, 46, 22, 20) + P('M150 76 Q132 30 162 18 Q164 50 178 66Z') + P('M250 76 Q268 30 238 18 Q236 50 222 66Z'),
+    sheep: E(86, 150, 44, 20, -25) + E(314, 150, 44, 20, 25),
+  };
+  if (o.mane) s += Bp(200, 165, 145, 140, 15);
+  if (earsB[o.ears]) s += earsB[o.ears];
+  // head
+  s += o.fluffy ? Bp(200, 160, 100, 98, 13) + E(200, 185, 68, 72) : C(200, 160, 105);
+  if (o.ears === 'droopy') s += E(100, 172, 32, 72, 14) + E(300, 172, 32, 72, -14);
+  if (o.stripes) s += L('M200 56 L200 88 M176 60 L182 86 M224 60 L218 86 M96 150 L124 156 M96 176 L122 176 M304 150 L276 156 M304 176 L278 176');
+  if (o.patches) s += E(160, 150, 28, 36, 30) + E(240, 150, 28, 36, -30);
+  if (o.face === 'monkey') s += P('M200 110 C170 92 118 104 124 150 C104 178 120 252 200 252 C280 252 296 178 276 150 C282 104 230 92 200 110Z');
+  if (o.face === 'fox') s += P('M98 178 Q152 172 200 232 Q248 172 302 178 Q262 262 200 264 Q138 262 98 178Z');
+  // eyes
+  const ey = o.face === 'monkey' ? 150 : 145;
+  s += K(160, ey, 13) + K(240, ey, 13);
+  if (o.cheeks) s += cheeks(122, 278, 200);
+  const faces = {
+    cat: poly([[188, 180], [212, 180], [200, 194]], 'k') + L('M200 194 Q200 210 184 212 M200 194 Q200 210 216 212 M150 192 L92 182 M150 204 L92 210 M250 192 L308 182 M250 204 L308 210'),
+    dog: E(200, 205, 56, 40) + E(200, 186, 18, 12, 0, 'k') + L('M200 198 L200 214 M178 222 Q200 236 222 222') + P('M192 228 Q200 252 208 228Z'),
+    bear: E(200, 205, 46, 36) + E(200, 192, 16, 11, 0, 'k') + L('M200 202 L200 214 M184 218 Q200 230 216 218'),
+    koala: E(200, 192, 26, 34, 0, 'k') + smile(200, 232, 18, 8),
+    pig: E(200, 205, 42, 29) + E(188, 205, 6, 10, 0, 'k') + E(212, 205, 6, 10, 0, 'k') + smile(200, 242, 26, 9),
+    cow: E(200, 218, 72, 46) + E(178, 218, 8, 11, 0, 'k') + E(222, 218, 8, 11, 0, 'k') + smile(200, 244, 22, 6),
+    monkey: C(192, 192, 4, 'k') + C(208, 192, 4, 'k') + smile(200, 212, 36, 14),
+    mouse: C(200, 192, 11, 'k') + L('M200 203 L200 212 M186 216 Q200 226 214 216 M150 196 L100 188 M150 206 L100 212 M250 196 L300 188 M250 206 L300 212'),
+    lion: C(186, 204, 22) + C(214, 204, 22) + poly([[188, 182], [212, 182], [200, 196]], 'k') + L('M186 228 Q200 238 214 228'),
+    fox: C(200, 222, 11, 'k') + L('M200 233 L200 240 M188 246 Q200 254 212 246'),
+    sheep: E(200, 210, 24, 14, 0, 'k') + smile(200, 232, 16, 6),
+  };
+  s += faces[o.face] || '';
+  if (o.bow) s += poly([[200, 268], [160, 250], [160, 286]]) + poly([[200, 268], [240, 250], [240, 286]]) + C(200, 268, 11);
+  if (o.whisk) s += '';
+  return s;
+}
+Object.assign(LIB, {
+  cat: () => sit({ ears: 'cat', face: 'cat', tail: 'cat', belly: 1, cheeks: 1 }),
+  dog: () => sit({ ears: 'droopy', face: 'dog', tail: 'dog', belly: 1, spots: 1 }),
+  lion: () => sit({ mane: 1, ears: 'round', face: 'lion', tail: 'lion', belly: 1 }),
+  tiger: () => sit({ ears: 'round', face: 'lion', tail: 'cat', stripes: 1, belly: 1, cheeks: 1 }),
+  bear: () => sit({ ears: 'round', face: 'bear', belly: 1 }),
+  panda: () => sit({ ears: 'round', face: 'bear', patches: 1, belly: 1 }),
+  pig: () => sit({ ears: 'pig', face: 'pig', tail: 'pig', hoof: 1, cheeks: 1 }),
+  cow: () => sit({ ears: 'cow', face: 'cow', tail: 'cow', spots: 1, hoof: 1 }),
+  mouse: () => sit({ ears: 'big', face: 'mouse', tail: 'pig', belly: 1, cheeks: 1 }),
+  rabbit: () => sit({ ears: 'bunny', face: 'mouse', tail: 'bunny', belly: 1, cheeks: 1 }),
+  monkey: () => sit({ ears: 'round', face: 'monkey', tail: 'monkey', belly: 1 }),
+  fox: () => sit({ ears: 'fox', face: 'fox', tail: 'fox', belly: 1 }),
+  sheep: () => sit({ ears: 'sheep', face: 'sheep', fluffy: 1, hoof: 1 }),
+  koala: () => sit({ ears: 'big', face: 'koala', belly: 1, cheeks: 1 }),
+  teddy: () => sit({ ears: 'round', face: 'bear', heart: 1, bow: 1 }) + L('M200 60 L200 80 M196 290 L204 290'),
+  elephant: () =>
+    R(178, 290, 46, 92, 16) + R(258, 290, 46, 92, 16) + L('M368 236 Q396 262 384 296') + Bp(383, 304, 9, 12, 6) +
+    E(232, 250, 142, 100) + R(118, 300, 52, 92, 18) + R(298, 300, 52, 92, 18) + L('M130 380 Q144 372 158 380 M310 380 Q324 372 338 380') +
+    E(196, 176, 64, 86, -6) + E(206, 180, 42, 60, -6) + P('M58 196 Q16 270 42 340 Q54 368 78 352 Q66 304 100 240Z') + C(112, 168, 86) + P('M84 246 Q70 280 98 286 Q92 266 104 250Z') +
+    L('M150 110 Q186 150 160 236') + K(82, 150, 10) + L('M92 226 Q108 238 126 230') + E(72, 200, 13, 8),
+  giraffe: () =>
+    R(100, 300, 24, 92, 10) + R(222, 300, 24, 92, 10) + L('M52 262 Q30 282 36 316') + E(36, 324, 8, 13) +
+    P('M196 248 L246 258 L310 98 L272 82Z') + E(152, 270, 104, 60) + R(70, 300, 24, 95, 10) + R(190, 300, 24, 95, 10) +
+    L('M282 46 L276 14 M304 46 L306 14') + C(276, 12, 8) + C(306, 12, 8) + E(262, 50, 20, 9, -30) + E(308, 72, 58, 33, 18) +
+    K(306, 62, 8) + C(352, 88, 4, 'k') + L('M330 98 Q344 104 356 98') +
+    E(110, 262, 18, 13) + E(160, 250, 16, 12) + E(205, 285, 18, 13) + E(130, 302, 14, 10) + E(80, 280, 12, 9) + E(268, 160, 12, 10) + E(286, 122, 10, 9) + E(252, 208, 12, 10) + E(265, 245, 9, 8),
+  turtle: () =>
+    E(80, 336, 32, 22) + E(266, 336, 32, 22) + poly([[30, 305], [6, 322], [36, 322]]) + E(358, 262, 40, 33) +
+    P('M38 302 Q48 138 188 138 Q322 138 332 302Z') + poly(starPts(185, 222, 46, 46, 3, -90).filter((_, i) => true)) +
+    L('M185 176 L185 140 M145 245 L100 290 M225 245 L270 290 M145 200 L70 210 M225 200 L300 210') + R(28, 296, 314, 30, 15) +
+    K(370, 252, 8) + L('M372 276 Q384 282 392 274'),
+  snail: () =>
+    P('M40 386 Q28 350 68 346 L94 250 Q100 200 128 204 Q150 214 140 262 L132 330 L350 334 Q392 346 384 386Z') +
+    L('M112 206 L96 148 M130 206 L142 148') + C(96, 142, 11) + C(142, 142, 11) + C(96, 142, 4, 'k') + C(142, 142, 4, 'k') + smile(120, 236, 12, 6) +
+    C(244, 236, 102) + L('M244 236 a18 18 0 1 1 18 18 a36 36 0 1 1 -36 -36 a54 54 0 1 1 54 54 a72 72 0 1 1 -72 -72'),
+  frog: () =>
+    E(84, 322, 46, 62, 22) + E(316, 322, 46, 62, -22) + E(200, 300, 130, 86) + E(200, 316, 76, 56) +
+    E(140, 372, 46, 20) + E(260, 372, 46, 20) + E(200, 190, 132, 80) +
+    C(132, 120, 46) + C(268, 120, 46) + C(132, 122, 26) + C(268, 122, 26) + K(134, 124, 12) + K(270, 124, 12) +
+    L('M108 208 Q200 270 292 208') + cheeks(96, 304, 212, 18, 10),
+  crocodile: () =>
+    E(96, 338, 20, 24) + E(236, 338, 20, 24) + P('M60 268 Q24 250 6 214 Q30 292 64 312Z') +
+    poly([[80, 258], [92, 228], [104, 256], [118, 226], [130, 254], [144, 224], [156, 252], [170, 224], [182, 252], [196, 226], [208, 254]]) +
+    E(186, 292, 150, 46) + E(142, 338, 20, 24) + E(280, 338, 20, 24) +
+    R(292, 296, 100, 22, 10) + L('M300 296 l8 -9 l8 9 l8 -9 l8 9 l8 -9 l8 9 l8 -9 l8 9 l8 -9 l8 9') + R(288, 254, 108, 42, 18) +
+    C(300, 248, 22) + K(302, 246, 8) + C(380, 266, 4, 'k') + L('M120 290 Q150 300 180 290 M200 296 Q230 306 260 294'),
+  camel: () =>
+    R(118, 280, 22, 110, 10) + R(242, 280, 22, 110, 10) + L('M64 246 Q46 270 54 300') +
+    P('M78 240 Q98 80 168 226 Q208 80 268 232Z') + E(180, 254, 122, 64) + R(84, 280, 24, 112, 10) + R(208, 280, 24, 112, 10) +
+    P('M268 236 Q322 206 310 132 L346 120 Q358 212 296 278Z') + E(346, 112, 42, 25, 10) + E(320, 92, 12, 6, -30) + K(346, 102, 7) + C(384, 120, 3, 'k') + L('M360 130 Q372 134 382 130'),
+  hippo: () =>
+    E(200, 320, 148, 68) + E(132, 380, 42, 18) + E(268, 380, 42, 18) +
+    E(130, 102, 20, 14, -20) + E(270, 102, 20, 14, 20) + E(200, 180, 118, 92) + C(152, 112, 28) + C(248, 112, 28) + K(152, 114, 11) + K(248, 114, 11) +
+    E(200, 238, 128, 66) + E(170, 214, 9, 13, 0, 'k') + E(230, 214, 9, 13, 0, 'k') + L('M120 262 Q200 296 280 262') + R(160, 266, 20, 22, 4) + R(220, 266, 20, 22, 4),
+});
+function horse(o = {}) {
+  let s = R(118, 272, 26, 112, 10) + R(250, 272, 26, 112, 10) + R(118, 372, 26, 20, 4) + R(250, 372, 26, 20, 4);
+  s += o.deer ? P('M66 226 Q46 222 48 244 Q62 246 72 236Z') : P('M66 218 Q18 232 24 322 Q40 302 50 282 Q56 302 72 300 Q60 262 72 236Z');
+  s += P('M248 222 L286 120 L332 136 L300 252Z') + E(182, 242, 122, 60);
+  s += R(84, 272, 26, 114, 10) + R(214, 272, 26, 114, 10) + R(84, 374, 26, 20, 4) + R(214, 374, 26, 20, 4);
+  if (o.deer) s += L('M300 92 L286 40 L262 30 M290 58 L306 34 M318 96 L338 48 L364 40 M332 62 L320 38');
+  s += poly([[300, 96], [306, 62], [322, 96]]) + E(336, 128, 60, 29, 38);
+  if (!o.deer) s += poly([[292, 96], [268, 116], [280, 124], [262, 146], [276, 152], [256, 178], [270, 184], [252, 214], [282, 120]]);
+  s += K(330, 114, 8) + C(370, 160, 4, 'k') + L('M352 166 Q362 172 372 166');
+  if (o.zebra) s += L('M140 190 Q150 220 136 250 M180 184 Q192 220 178 256 M220 186 Q232 220 220 250 M98 220 Q112 236 104 260 M268 160 L296 168 M262 190 L292 198 M256 220 L288 226 M90 300 L108 300 M226 300 L238 300 M90 330 L108 330 M226 330 L238 330');
+  if (o.deer) s += C(150, 220, 9) + C(190, 212, 8) + C(220, 236, 9) + C(170, 250, 7) + C(120, 240, 7);
+  return s;
+}
+Object.assign(LIB, { horse: () => horse(), zebra: () => horse({ zebra: 1 }), deer: () => horse({ deer: 1 }) });
+
+/* ===== Birds & insects ===== */
+Object.assign(LIB, {
+  owl: () =>
+    R(50, 372, 300, 22, 11) + poly([[106, 152], [104, 72], [166, 122]]) + poly([[294, 152], [296, 72], [234, 122]]) +
+    E(200, 250, 116, 138) + E(200, 316, 72, 64) + L('M170 300 l12 10 l12 -10 M206 300 l12 10 l12 -10 M188 334 l12 10 l12 -10') +
+    E(96, 268, 32, 82, 12) + E(304, 268, 32, 82, -12) +
+    C(154, 186, 46) + C(246, 186, 46) + C(154, 188, 24) + C(246, 188, 24) + K(156, 190, 12) + K(248, 190, 12) +
+    poly([[184, 228], [216, 228], [200, 258]]) + E(170, 380, 14, 10) + E(230, 380, 14, 10),
+  parrot: () =>
+    P('M246 318 L300 396 L268 396 L226 330Z') + P('M220 322 L246 398 L216 398 L200 330Z') +
+    E(222, 236, 72, 112, 18) + E(214, 268, 40, 66, 18) + R(60, 338, 320, 20, 10) + E(196, 344, 14, 10) + E(232, 344, 14, 10) +
+    E(256, 236, 44, 88, 20) + L('M240 200 Q260 240 248 290 M262 210 Q280 250 266 300') +
+    P('M128 106 Q92 112 98 156 Q114 144 132 142Z') + C(178, 116, 60) + C(176, 106, 18) + K(176, 106, 9) + E(190, 146, 20, 12) +
+    L('M150 66 Q160 40 182 50 M172 58 Q186 34 206 50'),
+  peacock: () =>
+    P('M20 310 A180 180 0 0 1 380 310Z') + P('M80 310 A120 120 0 0 1 320 310Z') +
+    (() => { let s = ''; for (let i = 0; i < 7; i++) { const a = Math.PI + (i + 0.5) * Math.PI / 7, x = 200 + 150 * Math.cos(a), y = 310 + 150 * Math.sin(a); s += E(x, y, 20, 26, a * 180 / Math.PI + 90) + E(x, y + 2, 9, 12, a * 180 / Math.PI + 90); } for (let i = 0; i < 5; i++) { const a = Math.PI + (i + 0.5) * Math.PI / 5, x = 200 + 92 * Math.cos(a), y = 310 + 92 * Math.sin(a); s += C(x, y, 12); } return s; })() +
+    L('M200 104 L198 72 M188 106 L176 78 M212 106 L224 78') + C(198, 68, 7) + C(174, 74, 7) + C(226, 74, 7) +
+    L('M186 360 L180 394 M214 360 L220 394') +
+    P('M200 140 Q232 146 226 214 Q262 290 242 352 Q200 380 158 352 Q138 290 174 214 Q168 146 200 140Z') + C(200, 132, 30) + K(192, 126, 7) + poly([[172, 136], [150, 144], [174, 148]]) + L('M180 300 Q200 316 220 300 M184 330 Q200 344 216 330'),
+  duck: () =>
+    L('M190 330 L184 370 M244 330 L250 370') + poly([[160, 378], [184, 364], [206, 380]]) + poly([[226, 380], [250, 364], [274, 378]]) +
+    P('M90 280 Q80 200 170 210 L290 220 Q346 186 354 232 Q362 302 280 332 Q150 352 90 280Z') +
+    P('M196 240 Q284 226 304 272 Q262 304 200 284Z') + E(78, 168, 38, 16, -8) + C(130, 150, 56) + K(130, 132, 9) + cheeks(158, 158, 166, 13, 8),
+  hen: () =>
+    E(330, 186, 25, 56, 30) + E(350, 214, 22, 50, 46) + E(340, 242, 20, 44, 62) +
+    L('M188 352 L182 392 M232 352 L238 392 M170 392 L194 392 M226 392 L250 392') +
+    E(210, 262, 122, 100) + C(110, 98, 15) + C(128, 90, 17) + C(146, 98, 14) +
+    C(126, 150, 52) + E(100, 202, 11, 17) + poly([[78, 146], [52, 158], [80, 170]]) + K(118, 140, 9) +
+    E(230, 266, 62, 44, -10) + L('M196 262 Q230 280 262 258 M200 284 Q232 300 262 280'),
+  penguin: () =>
+    E(96, 248, 26, 74, 22) + E(304, 248, 26, 74, -22) + E(166, 386, 36, 14) + E(234, 386, 36, 14) +
+    E(200, 240, 112, 152) + E(200, 280, 76, 104) + E(200, 160, 62, 46) + K(174, 150, 10) + K(226, 150, 10) + poly([[184, 176], [216, 176], [200, 198]]) + cheeks(150, 250, 186, 13, 8),
+  butterfly: () =>
+    E(126, 150, 88, 72, -28) + E(274, 150, 88, 72, 28) + E(140, 282, 62, 56, 22) + E(260, 282, 62, 56, -22) +
+    C(110, 140, 28) + C(290, 140, 28) + C(140, 288, 22) + C(260, 288, 22) + C(160, 104, 12) + C(240, 104, 12) +
+    L('M188 84 Q170 40 140 36 M212 84 Q230 40 260 36') + C(138, 34, 9) + C(262, 34, 9) +
+    E(200, 220, 22, 110) + C(200, 96, 28) + C(190, 92, 4, 'k') + C(210, 92, 4, 'k') + smile(200, 104, 8, 4),
+  bee: () =>
+    E(196, 138, 52, 72, -22) + E(262, 142, 46, 64, 26) + poly([[318, 250], [366, 262], [318, 276]]) +
+    E(200, 260, 124, 88) + L('M156 178 Q140 260 156 342 M206 172 Q190 260 206 348 M256 180 Q240 260 256 340') +
+    L('M72 182 Q56 130 30 128 M96 178 Q96 120 72 104') + C(28, 128, 8) + C(70, 102, 8) +
+    C(86, 252, 58) + K(70, 242, 9) + K(104, 242, 9) + smile(86, 270, 16, 7) + cheeks(60, 116, 268, 10, 6),
+  ladybug: () =>
+    L('M90 230 L40 210 M80 290 L30 300 M100 350 L60 380 M310 230 L360 210 M320 290 L370 300 M300 350 L340 380') +
+    L('M176 64 Q160 26 136 24 M224 64 Q240 26 264 24') + C(134, 24, 9) + C(266, 24, 9) +
+    C(200, 112, 64) + C(178, 92, 13) + C(222, 92, 13) + K(178, 94, 6) + K(222, 94, 6) +
+    C(200, 254, 140) + L('M200 118 L200 392') + C(140, 200, 26) + C(260, 200, 26) + C(124, 290, 22) + C(276, 290, 22) + C(164, 350, 18) + C(236, 350, 18),
+  chick: () =>
+    C(200, 236, 122) + L('M190 112 Q180 80 200 70 M204 114 Q214 84 236 86') + E(90, 250, 22, 40, 30) + E(310, 250, 22, 40, -30) +
+    K(160, 210, 12) + K(240, 210, 12) + poly([[184, 236], [216, 236], [200, 258]]) + cheeks(132, 268, 248) +
+    P('M70 290 L102 324 L134 292 L166 330 L200 292 L234 330 L266 292 L298 324 L330 290 Q338 396 200 396 Q62 396 70 290Z'),
+  nest: () =>
+    E(150, 220, 46, 58, -10) + E(250, 214, 46, 58, 12) + E(200, 230, 48, 60) +
+    P('M30 230 Q40 380 200 384 Q360 380 370 230 Q200 280 30 230Z') + L('M60 280 Q200 320 340 280 M80 330 Q200 360 320 330 M110 250 L150 300 M190 270 L170 330 M250 268 L280 320 M300 262 L330 300'),
+});
+/* ===== Sea ===== */
+Object.assign(LIB, {
+  fish: () =>
+    poly([[300, 220], [396, 136], [376, 220], [396, 304]]) + P('M136 136 Q192 66 254 136Z') + P('M160 300 Q190 350 230 302Z') +
+    E(180, 220, 142, 96) + L('M134 152 Q108 220 134 288') + C(86, 196, 24) + K(88, 198, 12) + smile(66, 246, 14, 6) +
+    L('M180 180 a16 16 0 0 0 0 32 M210 160 a16 16 0 0 0 0 32 M210 220 a16 16 0 0 0 0 32 M240 190 a16 16 0 0 0 0 32 M270 220 a16 16 0 0 0 0 32 M180 240 a16 16 0 0 0 0 32'),
+  whale: () =>
+    L('M180 110 Q160 70 130 66 M190 106 L190 52 M200 110 Q220 70 250 66') + C(128, 64, 9) + C(190, 46, 9) + C(252, 64, 9) +
+    P('M30 260 Q30 120 180 120 Q300 120 322 230 L380 170 Q400 176 392 202 L356 260 L396 302 Q396 322 376 322 L322 282 Q290 362 170 362 Q30 362 30 260Z') +
+    L('M44 300 Q170 346 304 290 M70 318 L72 330 M110 330 L112 344 M150 336 L150 350 M190 336 L188 350') + K(108, 222, 11) + smile(132, 262, 26, 8) + E(176, 302, 42, 18, 20),
+  octopus: () =>
+    (() => { let s = ''; [[68, -20], [120, -8], [174, 0], [226, 0], [280, 8], [332, 20]].forEach(([x, k]) => { s += P(`M${x - 20} 230 Q${x - 30 + k} 300 ${x - 6 + k} 362 Q${x + 4 + k} 394 ${x + 28 + k} 372 Q${x + 12 + k} 340 ${x + 20} 300 L${x + 26} 230Z`) + C(x + 4 + k * 0.6, 300, 7) + C(x + 8 + k * 0.8, 336, 6); }); return s; })() +
+    E(200, 160, 128, 116) + K(156, 170, 15) + K(244, 170, 15) + smile(200, 208, 30, 12) + cheeks(124, 276, 206) + C(150, 92, 14) + C(250, 100, 18) + C(200, 70, 10),
+  crab: () =>
+    L('M100 260 Q50 270 40 320 M104 290 Q60 310 60 360 M300 260 Q350 270 360 320 M296 290 Q340 310 340 360') +
+    L('M120 220 Q90 180 82 156 M280 220 Q310 180 318 156') +
+    P('M78 160 Q24 130 42 78 Q62 54 86 80 L76 102 Q100 98 108 76 Q128 118 78 160Z') + P('M322 160 Q376 130 358 78 Q338 54 314 80 L324 102 Q300 98 292 76 Q272 118 322 160Z') +
+    L('M168 196 L160 140 M232 196 L240 140') + C(158, 132, 18) + C(242, 132, 18) + K(160, 134, 8) + K(244, 134, 8) +
+    E(200, 260, 124, 76) + smile(200, 270, 34, 12) + cheeks(130, 270, 262) + C(150, 230, 8) + C(250, 230, 8),
+  starfish: () => P((() => { const p = starPts(200, 214, 188, 82, 5); let d = ''; p.forEach((q, i) => { d += (i ? ' L' : 'M') + f(q[0]) + ' ' + f(q[1]); }); return d + 'Z'; })()) +
+    K(176, 200, 12) + K(224, 200, 12) + smile(200, 232, 24, 10) + cheeks(156, 244, 240, 12, 7) + C(200, 90, 8) + C(318, 176, 8) + C(82, 176, 8) + C(110, 320, 8) + C(290, 320, 8),
+  jellyfish: () =>
+    L('M100 210 Q80 260 106 300 Q130 340 104 390 M150 216 Q170 270 146 320 Q130 360 152 394 M250 216 Q230 270 254 320 Q270 360 248 394 M300 210 Q320 260 294 300 Q270 340 296 390') +
+    P('M186 210 Q170 300 200 380 Q230 300 214 210Z') +
+    P('M60 210 Q60 60 200 60 Q340 60 340 210 Q312 226 286 210 Q256 230 228 210 Q200 230 172 210 Q144 230 114 210 Q88 226 60 210Z') +
+    K(160, 150, 12) + K(240, 150, 12) + smile(200, 172, 20, 8) + cheeks(124, 276, 176) + C(130, 100, 9) + C(270, 104, 12),
+  dolphin: () =>
+    poly([[222, 158], [262, 84], [290, 168]]) + P('M330 190 L392 140 L384 196 L398 250Z') + E(68, 266, 42, 17, -16) +
+    E(206, 222, 152, 70, -16) + L('M90 268 Q200 290 330 214') + E(196, 278, 42, 15, 32) + K(110, 222, 10) + smile(84, 268, 16, 4),
+  seahorse: () =>
+    E(166, 230, 26, 46, 24) + P('M200 60 Q262 50 272 100 L332 110 Q342 126 326 136 L272 142 Q282 190 252 230 Q232 270 262 310 Q292 350 252 376 Q200 392 196 350 Q196 330 216 336 Q230 346 236 330 Q240 310 214 280 Q178 240 194 180 Q160 160 164 110 Q170 70 200 60Z') +
+    L('M200 196 Q230 200 248 190 M206 230 Q230 236 244 226 M214 264 Q236 266 248 256') + poly([[196, 62], [186, 36], [214, 52]]) + poly([[178, 84], [150, 70], [168, 98]]) + K(220, 100, 10),
+  puffer: () =>
+    (() => { let s = ''; for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; s += poly([[200 + 128 * Math.cos(a - 0.12), 220 + 128 * Math.sin(a - 0.12)], [200 + 170 * Math.cos(a), 220 + 170 * Math.sin(a)], [200 + 128 * Math.cos(a + 0.12), 220 + 128 * Math.sin(a + 0.12)]]); } return s; })() +
+    C(200, 220, 140) + K(156, 190, 14) + K(244, 190, 14) + C(200, 252, 18) + cheeks(130, 270, 236) + C(150, 300, 10) + C(250, 300, 10) + C(200, 316, 8) + E(330, 230, 20, 34, -20),
+  shark: () =>
+    P('M20 232 Q120 142 280 172 L322 102 L336 182 Q370 192 394 162 L380 232 L394 302 Q360 266 330 272 Q200 322 60 272 Q20 256 20 232Z') +
+    L('M40 250 Q160 300 300 260 M190 200 L182 236 M206 200 L198 236 M222 202 L214 236') + K(84, 210, 10) + L('M40 248 l8 8 l8 -8 l8 8 l8 -8') + E(172, 280, 44, 16, 30),
+});
+
+/* ===== Cartoon (original characters) ===== */
+function kid(o = {}) {
+  let s = '';
+  if (o.girl) s += E(200, 160, 110, 120);
+  if (o.girl) {
+    if (o.gown) s += E(160, 388, 26, 12) + E(240, 388, 26, 12);
+    else s += R(166, 330, 22, 50, 8) + R(212, 330, 22, 50, 8) + E(172, 384, 26, 13) + E(228, 384, 26, 13);
+    s += E(126, 268, 18, 50, 30) + E(274, 268, 18, 50, -30) + C(106, 302, 14) + C(294, 302, 14);
+    s += o.gown ? P('M158 218 L242 218 L332 382 Q200 402 68 382Z') + L('M80 360 Q120 376 160 362 Q200 378 240 362 Q280 376 320 360 M120 300 Q160 312 200 300 Q240 312 280 300') + heart(200, 252, 16)
+      : P('M160 218 L240 218 L300 346 Q200 366 100 346Z') + L('M112 324 Q156 338 200 326 Q244 338 288 324') + C(200, 270, 6) + C(200, 296, 6);
+    s += P('M168 220 Q200 248 232 220Z');
+  } else {
+    s += R(158, 362, 26, 20) + R(216, 362, 26, 20) + E(168, 388, 30, 12) + E(232, 388, 30, 12);
+    s += C(112, 292, 15) + C(288, 292, 15);
+    s += P('M150 214 L250 214 L298 252 L276 282 L256 266 L256 336 L144 336 L144 266 L124 282 L102 252Z') + star(200, 282, 26, 11);
+    s += R(144, 330, 112, 38, 8) + L('M200 336 L200 368');
+    s += C(118, 146, 16) + C(282, 146, 16);
+  }
+  s += C(200, 140, 84);
+  if (o.girl) s += P('M116 132 Q120 52 200 50 Q280 52 284 132 Q258 100 238 108 Q222 84 200 106 Q178 84 162 108 Q142 100 116 132Z');
+  else if (o.cap) s += P('M116 118 Q116 46 200 46 Q284 46 284 118Z') + E(284, 116, 64, 13) + C(200, 46, 10);
+  else s += P('M118 138 Q112 54 200 52 Q288 54 282 138 Q264 106 242 112 Q232 88 212 104 Q190 84 170 104 Q150 96 118 138Z');
+  if (o.girl && !o.crown) s += poly([[262, 70], [232, 50], [236, 92]]) + poly([[262, 70], [292, 50], [288, 92]]) + C(262, 70, 10);
+  if (o.crown) s += poly([[148, 76], [148, 26], [174, 48], [200, 16], [226, 48], [252, 26], [252, 76]]) + C(200, 52, 9) + C(170, 62, 6) + C(230, 62, 6);
+  s += K(170, 148, 11) + K(230, 148, 11) + cheeks(146, 254, 176, 14, 8) + smile(200, 182, 18, 9);
+  if (o.wand) s += L('M300 300 L344 210') + star(348, 196, 30, 13);
+  return s;
+}
+Object.assign(LIB, {
+  girl: () => kid({ girl: 1 }),
+  boy: () => kid({ cap: 1 }),
+  princess: () => kid({ girl: 1, gown: 1, crown: 1, wand: 1 }),
+  boy2: () => kid({}),
+  robot: () =>
+    L('M200 58 L200 26') + C(200, 20, 12) + R(112, 92, 22, 46, 6) + R(266, 92, 22, 46, 6) +
+    R(132, 58, 136, 112, 20) + C(172, 104, 20) + C(228, 104, 20) + K(172, 104, 9) + K(228, 104, 9) + R(166, 134, 68, 20, 6) + L('M183 134 L183 154 M200 134 L200 154 M217 134 L217 154') +
+    R(184, 170, 32, 16) + R(64, 196, 34, 100, 16) + R(302, 196, 34, 100, 16) + C(81, 306, 20) + C(319, 306, 20) +
+    R(150, 300, 36, 70, 10) + R(214, 300, 36, 70, 10) + R(138, 362, 58, 28, 10) + R(206, 362, 58, 28, 10) +
+    R(100, 186, 200, 130, 22) + R(140, 210, 120, 80, 12) + heart(200, 246, 22) + C(156, 300, 8) + C(244, 300, 8),
+  snowman: () =>
+    L('M136 200 L72 150 M98 170 L90 140 M264 200 L328 150 M302 170 L310 140') +
+    C(200, 318, 78) + C(200, 204, 58) + C(200, 110, 48) + R(160, 14, 80, 46, 6) + R(140, 54, 120, 14, 7) + R(160, 38, 80, 12) +
+    K(182, 100, 8) + K(218, 100, 8) + poly([[198, 112], [246, 124], [198, 126]]) + L('M180 136 Q200 148 220 136') +
+    C(200, 192, 8) + C(200, 222, 8) + C(200, 300, 9) + C(200, 336, 9) + R(146, 154, 108, 22, 11) + R(212, 166, 26, 54, 8),
+  alien: () =>
+    P('M110 270 Q110 110 200 110 Q290 110 290 270Z') +
+    L('M178 150 L166 118 M222 150 L234 118') + C(164, 112, 9) + C(236, 112, 9) + E(200, 200, 54, 50) + E(178, 196, 15, 20, 0, 'k') + E(222, 196, 15, 20, 0, 'k') + smile(200, 222, 14, 6) +
+    L('M260 150 Q270 170 268 196') +
+    E(200, 286, 172, 46) + E(200, 272, 120, 20) + C(80, 290, 12) + C(140, 304, 12) + C(200, 310, 12) + C(260, 304, 12) + C(320, 290, 12) +
+    L('M120 326 L96 380 M280 326 L304 380') + E(94, 384, 20, 8) + E(306, 384, 20, 8),
+  monster: () =>
+    poly([[130, 128], [120, 60], [168, 108]]) + poly([[270, 128], [280, 60], [232, 108]]) +
+    E(70, 260, 28, 60, 30) + E(330, 260, 28, 60, -30) +
+    P('M80 380 Q60 200 120 120 Q200 50 280 120 Q340 200 320 380 Q300 360 280 380 Q260 360 240 380 Q220 360 200 380 Q180 360 160 380 Q140 360 120 380 Q100 360 80 380Z') +
+    C(200, 170, 46) + C(200, 172, 24) + K(204, 174, 12) + P('M140 246 Q200 300 260 246Z') + poly([[160, 250], [172, 270], [184, 254]]) + poly([[216, 254], [228, 270], [240, 250]]) +
+    C(120, 300, 14) + C(280, 310, 18) + C(220, 340, 10),
+  astronaut: () =>
+    R(96, 214, 208, 112, 24) + E(96, 262, 26, 54, 20) + E(304, 262, 26, 54, -20) + C(82, 306, 18) + C(318, 306, 18) +
+    R(132, 200, 136, 140, 36) + R(164, 230, 72, 46, 10) + C(184, 253, 8) + C(216, 253, 8) +
+    R(142, 332, 50, 56, 14) + R(208, 332, 50, 56, 14) +
+    L('M200 40 L200 18') + C(200, 14, 9) + C(200, 128, 90) + E(200, 134, 66, 52) + K(178, 128, 9) + K(222, 128, 9) + smile(200, 150, 14, 7) + L('M150 110 Q160 96 176 92'),
+  clown: () =>
+    P('M120 278 L280 278 L304 384 L96 384Z') + C(200, 316, 12) + C(200, 352, 12) +
+    Bp(200, 266, 112, 30, 12) + C(108, 152, 40) + C(292, 152, 40) + C(200, 170, 76) +
+    poly([[156, 108], [244, 108], [200, 14]]) + C(200, 14, 15) + C(186, 70, 7) + C(212, 88, 7) +
+    C(170, 154, 16) + C(230, 154, 16) + K(170, 156, 8) + K(230, 156, 8) + C(200, 184, 18) + P('M150 202 Q200 250 250 202 Q200 222 150 202Z'),
+});
+/* ===== Bhakti / festival ===== */
+function rangoli(n, k) {
+  let s = C(200, 200, 196);
+  for (let i = 0; i < n; i++) { const a = i * 360 / n; s += G(`rotate(${a} 200 200)`, P('M200 10 Q232 60 200 110 Q168 60 200 10Z')); }
+  s += C(200, 200, 110);
+  for (let i = 0; i < n; i++) { const a = (i + 0.5) * 360 / n; s += G(`rotate(${a} 200 200)`, E(200, 128, 18, 30)); }
+  s += C(200, 200, 72);
+  for (let i = 0; i < k; i++) { const a = i * 2 * Math.PI / k; s += C(200 + 54 * Math.cos(a), 200 + 54 * Math.sin(a), 14); }
+  s += flower(200, 200, 40, k > 6 ? 8 : 6);
+  for (let i = 0; i < n; i++) { const a = (i + 0.5) * 2 * Math.PI / n; s += C(200 + 160 * Math.cos(a), 200 + 160 * Math.sin(a), 9); }
+  return s;
+}
+Object.assign(LIB, {
+  om: () => C(200, 190, 170) + C(200, 190, 140) + TX(200, 286, 220, 'ॐ', 'tdev') + Bp(200, 384, 120, 18, 10, Math.PI),
+  swastik: () => C(200, 200, 186) + tube('M200 200 L200 82 L300 82 M200 200 L318 200 L318 300 M200 200 L200 318 L100 318 M200 200 L82 200 L82 100', 44) + C(136, 136, 20) + C(264, 136, 20) + C(136, 264, 20) + C(264, 264, 20),
+  diya: () => L('M200 60 L200 30 M140 90 L120 70 M260 90 L280 70 M120 150 L92 150 M280 150 L308 150') +
+    P('M200 84 Q254 168 228 216 Q200 238 172 216 Q146 168 200 84Z') + P('M200 140 Q222 186 210 208 Q200 218 190 208 Q178 186 200 140Z') +
+    E(200, 368, 76, 20) + P('M54 244 Q200 332 346 244 Q336 344 200 350 Q64 344 54 244Z') + E(200, 244, 146, 28) + R(194, 214, 12, 26, 4) + C(120, 296, 9) + C(160, 314, 9) + C(200, 320, 9) + C(240, 314, 9) + C(280, 296, 9),
+  kalash: () =>
+    G('rotate(-50 200 140)', E(200, 90, 22, 56)) + G('rotate(-25 200 140)', E(200, 86, 22, 58)) + G('rotate(25 200 140)', E(200, 86, 22, 58)) + G('rotate(50 200 140)', E(200, 90, 22, 56)) +
+    E(200, 92, 46, 56) + L('M188 46 Q200 30 212 46 M194 40 L190 26 M206 40 L210 26') +
+    E(200, 376, 82, 16) + P('M150 162 Q58 200 80 300 Q100 376 200 376 Q300 376 320 300 Q342 200 250 162Z') + R(146, 132, 108, 34, 8) + E(200, 132, 74, 14) +
+    L('M84 250 Q200 276 316 250 M90 310 Q200 336 310 310') + tube('M200 282 L200 260 L218 260 M200 282 L222 282 L222 300 M200 282 L200 304 L182 304 M200 282 L178 282 L178 264', 8),
+  mandir: () =>
+    R(40, 350, 320, 42, 6) + R(60, 330, 280, 24, 4) + R(60, 210, 70, 120) + poly([[54, 212], [136, 212], [95, 150]]) + R(270, 210, 70, 120) + poly([[264, 212], [346, 212], [305, 150]]) +
+    P('M120 214 Q126 120 200 50 Q274 120 280 214Z') + L('M200 50 L200 18 L240 30 L200 42') + C(200, 52, 10) + L('M136 150 L264 150 M128 186 L272 186 M150 110 L250 110') +
+    R(118, 210, 164, 120) + P('M170 330 L170 270 Q200 236 230 270 L230 330Z') + C(200, 246, 9) + R(80, 250, 30, 40, 15) + R(290, 250, 30, 40, 15),
+  lotus: () =>
+    E(80, 350, 80, 22, -8) + E(320, 350, 80, 22, 8) +
+    G('rotate(-70 200 320)', P('M200 110 Q250 220 200 320 Q150 220 200 110Z')) + G('rotate(70 200 320)', P('M200 110 Q250 220 200 320 Q150 220 200 110Z')) +
+    G('rotate(-38 200 320)', P('M200 90 Q258 210 200 320 Q142 210 200 90Z')) + G('rotate(38 200 320)', P('M200 90 Q258 210 200 320 Q142 210 200 90Z')) +
+    P('M200 70 Q262 200 200 320 Q138 200 200 70Z') + L('M200 120 L200 300 M30 384 Q80 370 130 384 M270 384 Q320 370 370 384'),
+  ganesh: () =>
+    Bp(200, 392, 150, 26, 12, Math.PI) + E(200, 352, 120, 34) +
+    C(200, 290, 92) + E(200, 316, 60, 48) + C(98, 306, 22) + C(98, 306, 10) + C(306, 296, 26) + L('M290 284 l8 8 M306 280 l0 10 M318 286 l-6 8') +
+    E(92, 158, 58, 72, -10) + E(308, 158, 58, 72, 10) + E(96, 162, 36, 50, -10) + E(304, 162, 36, 50, 10) +
+    C(200, 150, 82) + P('M140 88 L148 38 L174 62 L200 22 L226 62 L252 38 L260 88Z') + C(200, 66, 9) +
+    E(200, 112, 7, 12) + K(170, 136, 10) + K(230, 136, 10) +
+    P('M186 172 Q176 250 218 284 Q254 296 252 270 Q222 266 218 236 Q212 206 216 172Z') + P('M168 190 Q150 214 166 224 Q166 206 176 196Z'),
+  bansuri: () =>
+    G('rotate(-60 250 210)', E(250, 120, 48, 112) + E(250, 98, 30, 40) + E(250, 98, 14, 18) + L('M250 230 L250 390 M250 140 L220 220 M250 140 L280 220 M250 180 L224 250 M250 180 L276 250')) +
+    G('rotate(-24 200 260)', R(10, 244, 380, 32, 16) + C(150, 260, 7) + C(190, 260, 7) + C(230, 260, 7) + C(270, 260, 7) + C(310, 260, 7) + R(80, 242, 16, 36, 4)) +
+    poly([[88, 310], [52, 296], [60, 330]]) + poly([[88, 310], [104, 346], [74, 344]]) + C(88, 310, 9),
+  shivling: () =>
+    E(200, 350, 150, 38) + R(326, 330, 66, 24, 10) + E(200, 322, 150, 34) +
+    P('M140 322 L140 170 Q140 98 200 98 Q260 98 260 170 L260 322Z') + L('M160 168 L240 168 M156 184 L244 184 M160 200 L240 200') + C(200, 184, 8, 'k') +
+    E(78, 300, 22, 34, -30) + E(56, 268, 18, 28, -60) + E(100, 266, 18, 28, 0) +
+    P('M150 30 Q200 10 250 30 L236 60 L164 60Z') + E(200, 30, 50, 10) + E(200, 74, 6, 10),
+  trishul: () =>
+    R(190, 130, 20, 262, 6) +
+    P('M106 56 Q96 156 196 162 L196 140 Q130 140 128 56Z') + P('M294 56 Q304 156 204 162 L204 140 Q270 140 272 56Z') + poly([[184, 142], [200, 30], [216, 142]]) + R(170, 150, 60, 16, 6) +
+    poly([[148, 200], [252, 200], [200, 246]]) + poly([[148, 292], [252, 292], [200, 246]]) + E(200, 200, 52, 10) + E(200, 292, 52, 10) +
+    L('M150 246 Q120 250 116 270 M250 246 Q280 250 284 270') + C(114, 276, 9) + C(286, 276, 9) + E(140, 340, 30, 12, -20) + E(260, 340, 30, 12, 20),
+  shankh: () => G('rotate(-62 200 220) translate(0 10)',     poly([[150, 132], [166, 96], [184, 126]]) + poly([[196, 122], [214, 86], [230, 120]]) + poly([[244, 122], [264, 90], [276, 126]]) +
+    P('M24 222 Q110 116 260 118 Q372 128 382 222 Q372 304 260 314 Q110 316 24 222Z') +
+    L('M66 196 Q86 222 66 248 M98 174 Q126 222 98 270 M134 156 Q168 222 134 288') +
+    P('M246 148 Q352 158 362 222 Q352 280 246 290 Q290 220 246 148Z')) + E(200, 386, 120, 10),
+  ghanta: () =>
+    R(188, 58, 24, 70, 8) + P('M200 10 Q226 36 200 58 Q174 36 200 10Z') + C(200, 128, 20) +
+    C(200, 352, 20) + P('M118 320 Q128 162 200 140 Q272 162 282 320Z') + R(96, 314, 208, 30, 15) + L('M132 250 Q200 270 268 250 M126 288 Q200 308 274 288') + C(200, 210, 14),
+  tirthankar: () =>
+    R(150, 12, 100, 14, 6) + R(130, 26, 140, 14, 6) + R(110, 40, 180, 14, 6) +
+    C(200, 132, 74) + E(146, 146, 12, 30) + E(254, 146, 12, 30) + C(200, 128, 46) +
+    C(184, 98, 6) + C(200, 94, 6) + C(216, 98, 6) + C(172, 108, 5) + C(228, 108, 5) +
+    L('M184 130 Q190 134 196 130 M204 130 Q210 134 216 130') + L('M192 152 Q200 156 208 152') +
+    P('M140 182 Q200 168 260 182 L292 286 L108 286Z') + P('M186 214 L200 232 L214 214 L200 196Z') +
+    Bp(200, 384, 170, 24, 13, Math.PI) + E(200, 326, 150, 46) + E(200, 292, 58, 22),
+  ahimsa: () =>
+    R(118, 40, 36, 120, 18) + R(160, 22, 38, 130, 19) + R(204, 26, 38, 126, 19) + R(248, 52, 34, 110, 17) + E(96, 236, 26, 66, -35) +
+    P('M112 140 L290 140 Q296 300 200 350 Q110 300 112 140Z') + L('M110 384 L290 384') +
+    C(202, 236, 62) + C(202, 236, 22) + L((() => { let d = ''; for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; d += `M${f(202 + 22 * Math.cos(a))} ${f(236 + 22 * Math.sin(a))} L${f(202 + 62 * Math.cos(a))} ${f(236 + 62 * Math.sin(a))} `; } return d; })()),
+  matki: () =>
+    P('M150 92 Q170 40 200 50 Q236 36 250 92Z') + C(176, 72, 8) + C(222, 70, 8) +
+    E(200, 380, 90, 14) + P('M146 120 Q50 160 70 270 Q90 376 200 376 Q310 376 330 270 Q350 160 254 120Z') + R(140, 88, 120, 36, 12) +
+    L('M78 220 Q200 250 322 220 M76 290 Q200 322 324 290') + C(130, 255, 10) + C(200, 266, 10) + C(270, 255, 10) + P('M250 124 Q262 150 250 168 Q238 150 250 124Z'),
+  rangoli8: () => rangoli(6, 6),
+  rangoli12: () => rangoli(8, 8),
+  rangoli16: () => rangoli(10, 6),
+});
+
+/* ===== Vehicles ===== */
+const wheel = (x, y, r) => C(x, y, r) + C(x, y, r * 0.42) + C(x, y, r * 0.12, 'k');
+Object.assign(LIB, {
+  car: () =>
+    P('M98 224 L142 140 L270 140 L322 224Z') + poly([[124, 216], [154, 154], [198, 154], [198, 216]]) + poly([[212, 154], [262, 154], [298, 216], [212, 216]]) +
+    R(28, 220, 344, 92, 32) + L('M206 224 L206 304') + R(220, 242, 26, 9, 4) + E(360, 252, 10, 16) + R(30, 244, 14, 26, 4) + wheel(110, 312, 46) + wheel(290, 312, 46),
+  bus: () =>
+    R(20, 104, 360, 226, 26) + R(36, 128, 60, 64, 8) + R(108, 128, 60, 64, 8) + R(180, 128, 60, 64, 8) + R(252, 128, 52, 64, 8) + R(318, 128, 46, 150, 8) +
+    L('M20 218 L318 218 M341 128 L341 278') + TX(166, 272, 32, 'SCHOOL BUS', 'tt') + E(372, 300, 8, 12) + wheel(96, 332, 42) + wheel(296, 332, 42),
+  truck: () =>
+    R(18, 116, 236, 196, 12) + L('M40 150 L232 150 M40 280 L232 280') + P('M252 176 L318 176 L374 240 L374 312 L252 312Z') + poly([[270, 192], [314, 192], [352, 238], [270, 238]]) + R(356, 280, 26, 32, 6) + R(280, 254, 26, 8, 4) +
+    wheel(84, 322, 40) + wheel(194, 322, 40) + wheel(318, 322, 40),
+  train: () =>
+    C(300, 56, 22) + C(330, 34, 16) + C(356, 20, 11) + R(272, 98, 44, 74, 4) + R(260, 84, 68, 20, 6) +
+    R(140, 168, 206, 142, 14) + L('M196 168 L196 310 M246 168 L246 310') + R(36, 108, 130, 202, 12) + R(26, 90, 150, 26, 8) + R(62, 136, 78, 64, 8) +
+    poly([[344, 262], [392, 312], [344, 312]]) + C(344, 206, 16) + wheel(92, 320, 44) + wheel(208, 332, 32) + wheel(296, 332, 32) + L('M92 320 L296 332'),
+  airplane: () =>
+    poly([[182, 186], [150, 112], [190, 112], [236, 186]]) + poly([[42, 196], [20, 104], [88, 176]]) +
+    E(200, 206, 176, 48) + P('M320 186 Q350 182 368 200 L330 206Z') + C(140, 196, 12) + C(180, 196, 12) + C(220, 196, 12) + C(260, 196, 12) + L('M44 226 Q200 246 360 222') +
+    P('M168 214 L110 324 L162 324 L252 214Z') + E(66, 236, 30, 9),
+  helicopter: () =>
+    R(214, 172, 152, 26, 12) + C(368, 184, 30) + L('M368 156 L368 212 M340 184 L396 184') + R(150, 102, 20, 28) + R(10, 88, 300, 18, 9) +
+    L('M96 276 L84 322 M222 276 L234 322') + R(44, 318, 240, 14, 7) +
+    E(160, 204, 112, 82) + P('M78 190 Q86 134 160 130 L160 204 L78 204Z') + C(190, 214, 9) + C(226, 214, 9),
+  boat: () =>
+    R(194, 56, 12, 216, 4) + poly([[200, 60], [200, 28], [244, 44]]) + poly([[214, 72], [214, 252], [344, 252]]) + poly([[186, 100], [186, 252], [76, 252]]) +
+    P('M30 266 L370 266 L314 344 L86 344Z') + C(120, 300, 13) + C(200, 300, 13) + C(280, 300, 13) + L('M10 376 Q50 356 90 376 T170 376 T250 376 T330 376 T410 376'),
+  bicycle: () =>
+    wheel(96, 288, 82) + wheel(304, 288, 82) +
+    L('M96 206 L96 370 M14 288 L178 288 M38 230 L154 346 M38 346 L154 230 M304 206 L304 370 M222 288 L386 288 M246 230 L362 346 M246 346 L362 230') +
+    tube('M96 288 L168 180 L282 180 L304 288 M168 180 L204 288 L282 180 M204 288 L96 288 M282 180 L268 134 L304 124', 14) + E(158, 166, 34, 11) + C(204, 288, 18),
+  rocket: () =>
+    poly([[132, 216], [70, 322], [136, 292]]) + poly([[268, 216], [330, 322], [264, 292]]) +
+    P('M160 312 Q170 382 200 398 Q230 382 240 312Z') + P('M178 312 Q184 356 200 366 Q216 356 222 312Z') + R(150, 288, 100, 26, 6) +
+    P('M200 18 Q282 100 270 290 L130 290 Q118 100 200 18Z') + L('M150 80 L250 80 M134 240 L266 240') + C(200, 160, 38) + C(200, 160, 25),
+  auto: () =>
+    P('M38 302 L38 128 Q38 78 110 78 L282 78 Q352 90 372 200 L384 302Z') + P('M78 128 L228 128 L228 262 L78 262Z') + poly([[256, 108], [300, 108], [342, 204], [256, 204]]) +
+    L('M38 232 L78 232 M228 232 L384 232') + R(120, 210, 70, 30, 8) + C(376, 244, 12) + wheel(92, 312, 42) + wheel(328, 312, 42),
+  tractor: () =>
+    R(290, 126, 16, 76, 4) + R(60, 88, 124, 136, 10) + R(80, 108, 82, 62, 6) + R(170, 200, 196, 84, 12) + L('M330 214 L330 270 M348 214 L348 270') +
+    P('M10 270 A100 100 0 0 1 210 270Z') + wheel(110, 290, 96) + wheel(322, 330, 52),
+  van: () =>
+    R(26, 120, 348, 190, 34) + R(52, 140, 72, 70, 10) + R(140, 140, 72, 70, 10) + P('M228 140 L300 140 Q340 150 352 210 L228 210Z') + L('M228 220 L228 300') + R(240, 234, 26, 9, 4) +
+    E(364, 254, 9, 15) + wheel(102, 312, 44) + wheel(298, 312, 44),
+});
+/* ===== Fruits & vegetables ===== */
+Object.assign(LIB, {
+  apple: () => P('M196 112 Q188 70 200 38 L212 42 Q202 76 208 112Z') + E(244, 70, 40, 18, -30) +
+    P('M200 112 C140 72 50 100 60 200 C70 320 150 384 200 352 C250 384 330 320 340 200 C350 100 260 72 200 112Z') + L('M100 170 Q104 140 128 128'),
+  banana: () => R(70, 92, 26, 50, 8, null, -30) + [-22, 0, 22].map(a => G(`rotate(${a} 90 130)`, P('M84 128 Q130 330 344 300 Q366 290 352 280 Q160 286 102 124Z'))).join(''),
+  mango: () => P('M206 64 Q206 30 220 20 L230 26 Q218 40 218 64Z') + E(262, 46, 42, 18, -18) +
+    P('M210 62 C320 62 362 180 332 262 C302 352 200 382 140 342 C70 302 60 200 110 130 C140 90 170 62 210 62Z') + L('M130 180 Q140 140 170 120'),
+  grapes: () => L('M200 90 Q200 50 230 30') + Bp(260, 62, 52, 34, 9) + L('M220 62 L300 62') +
+    [[130, 130], [196, 126], [262, 130], [100, 186], [164, 188], [230, 188], [296, 186], [134, 244], [200, 246], [266, 244], [166, 302], [232, 302], [200, 358]].map(([x, y]) => C(x, y, 36) + L(`M${x - 18} ${y - 10} Q${x - 14} ${y - 22} ${x - 2} ${y - 24}`)).join(''),
+  strawberry: () => P('M200 382 C100 332 58 200 110 140 C150 110 250 110 290 140 C342 200 300 332 200 382Z') +
+    poly([[200, 140], [150, 160], [170, 130], [120, 120], [175, 108], [160, 80], [200, 100], [240, 80], [225, 108], [280, 120], [230, 130], [250, 160]]) + R(194, 62, 12, 40, 5) +
+    [[150, 190], [200, 180], [250, 190], [130, 240], [180, 236], [230, 236], [276, 240], [160, 290], [210, 290], [250, 285], [200, 335]].map(([x, y]) => E(x, y, 5, 9)).join(''),
+  watermelon: () => P('M24 140 A176 176 0 0 0 376 140Z') + P('M56 140 A144 144 0 0 0 344 140Z') + E(200, 140, 176, 14) +
+    [[130, 190], [200, 200], [270, 190], [160, 240], [240, 240], [200, 270]].map(([x, y]) => E(x, y, 7, 12, 0, 'k')).join(''),
+  pineapple: () => [-50, -25, 0, 25, 50].map(a => G(`rotate(${a} 200 140)`, P('M200 140 Q178 80 200 20 Q222 80 200 140Z'))).join('') +
+    E(200, 264, 104, 128) + [[160, 190], [240, 190], [200, 230], [130, 250], [270, 250], [160, 290], [240, 290], [200, 330], [200, 160]].map(([x, y]) => L(`M${x - 12} ${y - 12} L${x + 12} ${y + 12} M${x + 12} ${y - 12} L${x - 12} ${y + 12}`)).join(''),
+  orange: () => R(194, 70, 12, 30, 4) + E(244, 74, 42, 18, -20) + C(200, 236, 142) + C(160, 180, 5) + C(240, 200, 5) + C(200, 270, 5) + C(130, 260, 5) + C(270, 290, 5) + L('M110 180 Q118 150 140 134'),
+  cherry: () => E(230, 70, 44, 18, -25) + L('M200 60 Q160 140 132 240 M200 60 Q250 140 270 232') + C(130, 300, 64) + C(272, 292, 62) + L('M90 280 Q94 260 110 252 M234 272 Q238 252 254 246'),
+  pear: () => R(194, 40, 12, 40, 5) + E(240, 56, 36, 15, -25) + P('M200 70 C240 70 250 130 262 170 C342 222 342 382 200 382 C58 382 58 222 138 170 C150 130 160 70 200 70Z') + L('M120 260 Q124 230 140 216'),
+  carrot: () => E(250, 70, 18, 52, 30) + E(286, 78, 18, 50, 60) + E(220, 66, 16, 48, 0) +
+    P('M150 116 Q236 92 284 150 Q202 272 70 384 Q58 384 62 370 Q126 222 150 116Z') + L('M170 160 L200 170 M160 220 L190 226 M140 280 L162 284 M200 140 L222 150'),
+  tomato: () => R(194, 74, 12, 40, 4) + E(200, 242, 152, 126) + L('M100 220 Q104 190 126 172') + star(200, 126, 64, 22, 5),
+  brinjal: () => P('M176 128 Q264 110 302 200 Q352 330 262 372 Q170 400 140 300 Q120 230 176 128Z') + L('M190 300 Q200 340 236 350') +
+    P('M148 144 Q200 92 266 128 L256 172 Q232 150 220 178 Q200 150 180 178 Q168 152 146 168Z') + R(196, 62, 14, 50, 5, null, 10),
+  anar: () => poly([[166, 108], [172, 58], [188, 90], [200, 52], [212, 90], [228, 58], [234, 108]]) + C(200, 244, 140) + L('M110 200 Q118 160 150 140') + C(250, 300, 6) + C(160, 300, 6) + C(220, 340, 6),
+});
+/* ===== Toys, sweets & things ===== */
+function coneLines() {
+  let d = '';
+  const lx = y => 130 + 70 * (y - 222) / 168, rx = y => 270 - 70 * (y - 222) / 168;
+  for (let y = 222; y < 360; y += 34) { d += `M${f(lx(y))} ${y} L${f(rx(Math.min(y + 70, 388)))} ${Math.min(y + 70, 388)} M${f(rx(y))} ${y} L${f(lx(Math.min(y + 70, 388)))} ${Math.min(y + 70, 388)} `; }
+  return L(d);
+}
+Object.assign(LIB, {
+  ball: () => C(200, 220, 162) + L('M200 58 Q118 220 200 382 M200 58 Q282 220 200 382 M38 220 Q200 262 362 220') + L('M96 140 Q110 108 140 94'),
+  kite: () => L('M200 322 Q160 350 210 372 Q250 390 220 398') + poly([[188, 346], [168, 330], [168, 362]]) + poly([[188, 346], [208, 330], [208, 362]]) +
+    poly([[200, 26], [322, 170], [200, 322], [78, 170]]) + L('M200 26 L200 322 M78 170 L322 170') + L('M322 170 Q360 260 396 398'),
+  balloons: () => L('M140 210 Q160 300 200 386 M260 200 Q240 300 200 386 M200 274 L200 386') +
+    E(140, 130, 62, 80) + E(260, 122, 62, 80) + E(200, 192, 66, 84) +
+    poly([[140, 210], [130, 224], [150, 224]]) + poly([[260, 202], [250, 216], [270, 216]]) + poly([[200, 276], [190, 290], [210, 290]]) +
+    L('M104 100 Q110 80 128 72 M224 92 Q230 72 248 64 M162 160 Q168 140 186 132') + poly([[200, 370], [176, 356], [176, 384]]) + poly([[200, 370], [224, 356], [224, 384]]),
+  icecream: () => poly([[130, 222], [270, 222], [200, 390]]) + coneLines() +
+    C(200, 96, 58) + R(196, 20, 8, 26, 3) + C(200, 38, 15) +
+    P('M126 196 Q120 128 200 120 Q280 128 274 196 Q274 230 254 222 Q246 248 228 226 Q212 250 196 226 Q176 248 166 224 Q140 240 126 196Z'),
+  cupcake: () => poly([[108, 232], [292, 232], [262, 382], [138, 382]]) + L('M146 232 L160 382 M184 232 L190 382 M216 232 L210 382 M254 232 L240 382') +
+    Bp(200, 200, 112, 56, 11) + E(200, 140, 70, 44) + E(200, 104, 40, 26) + C(200, 70, 18) + L('M200 52 Q206 34 222 28') +
+    R(140, 176, 16, 6, 3, null, 30) + R(240, 180, 16, 6, 3, null, -30) + R(180, 130, 16, 6, 3, null, -20) + R(220, 150, 16, 6, 3, null, 40),
+  cake: () => E(200, 384, 186, 14) + R(56, 250, 288, 130, 16) + L('M56 286 Q80 310 104 286 Q128 310 152 286 Q176 310 200 286 Q224 310 248 286 Q272 310 296 286 Q320 310 344 286') +
+    R(106, 158, 188, 96, 14) + L('M106 190 Q130 212 154 190 Q178 212 202 190 Q226 212 250 190 Q274 212 294 190') +
+    [150, 200, 250].map(x => R(x - 8, 104, 16, 56, 4) + P(`M${x} 66 Q${x + 16} 90 ${x} 100 Q${x - 16} 90 ${x} 66Z`)).join('') + heart(120, 336, 16) + heart(200, 340, 16) + heart(280, 336, 16),
+  gift: () => R(70, 192, 260, 192, 8) + R(48, 150, 304, 52, 8) + R(180, 150, 40, 234) + E(156, 120, 44, 26, -25) + E(244, 120, 44, 26, 25) + C(200, 140, 18),
+  drum: () => R(118, 20, 14, 140, 7, null, -30) + R(268, 20, 14, 140, 7, null, 30) + C(84, 40, 18) + C(316, 40, 18) +
+    E(200, 344, 124, 34) + R(76, 176, 248, 168) + E(200, 176, 124, 34) + L('M80 200 L120 330 L160 200 L200 330 L240 200 L280 330 L320 200') + R(76, 196, 248, 12) + R(76, 318, 248, 12),
+  lattu: () => L('M215 92 Q280 60 300 100 Q320 140 280 150') + R(186, 84, 28, 66, 8) + C(200, 82, 15) +
+    P('M88 172 Q200 122 312 172 Q302 262 200 362 Q98 262 88 172Z') + L('M96 210 Q200 240 304 210 M120 262 Q200 290 280 262') + poly([[190, 352], [210, 352], [200, 394]]),
+  xylophone: () => R(30, 180, 340, 22, 10) + R(30, 330, 340, 22, 10) +
+    [0, 1, 2, 3, 4, 5, 6].map(i => R(44 + i * 46, 120 + i * 12, 38, 270 - i * 24, 8) + C(63 + i * 46, 140 + i * 12, 6) + C(63 + i * 46, 372 - i * 12, 6)).join('') +
+    R(196, 40, 12, 120, 6, null, 50) + C(168, 30, 18) + R(266, 46, 12, 120, 6, null, 30) + C(250, 34, 18),
+  yoyo: () => L('M200 230 L200 46') + C(200, 32, 16) + C(200, 236, 144) + C(200, 236, 104) + C(200, 236, 32) + star(200, 170, 26, 11) + star(140, 270, 22, 9) + star(260, 270, 22, 9),
+  crown: () => P('M70 300 L56 136 L130 212 L200 96 L270 212 L344 136 L330 300Z') + R(64, 290, 272, 54, 12) + C(56, 132, 16) + C(200, 92, 18) + C(344, 132, 16) + C(130, 316, 12) + C(200, 316, 14) + E(270, 316, 14, 10) + heart(200, 230, 26),
+  umbrella: () => tube('M200 196 L200 356 Q200 392 172 386 Q152 380 156 364', 16) +
+    P('M30 200 Q40 60 200 50 Q360 60 370 200 Q330 180 290 200 Q245 180 200 200 Q155 180 110 200 Q70 180 30 200Z') + L('M200 50 Q160 120 155 192 M200 50 Q240 120 245 192 M200 50 Q100 100 72 186 M200 50 Q300 100 328 186') + C(200, 44, 10),
+  starfun: () => star(200, 214, 196, 88) + K(170, 206, 12) + K(230, 206, 12) + smile(200, 238, 24, 10) + cheeks(150, 250, 246, 13, 8),
+  imli: () => [['translate(0 -60)'], ['translate(20 60) rotate(8 200 200)']].map(([t]) => G(t, P('M40 200 Q60 166 90 190 Q115 162 140 190 Q165 162 190 190 Q215 162 240 190 Q265 162 290 190 Q322 172 348 200 Q322 232 290 214 Q265 242 240 214 Q215 242 190 214 Q165 242 140 214 Q115 242 90 214 Q60 236 40 200Z') + L('M348 200 L372 190'))).join('') + E(120, 330, 40, 14, -20) + E(170, 352, 40, 14, 10),
+  ganna: () => [-14, 0, 14].map((a, i) => G(`rotate(${a} 200 390)`, E(200 - 24, 70, 14, 60, -30) + E(200 + 26, 64, 14, 62, 30) + R(178, 90, 44, 300, 10) + L('M178 150 L222 150 M178 210 L222 210 M178 270 L222 270 M178 330 L222 330'))).join(''),
+  oon: () => G('rotate(-30 200 200)', R(120, 20, 12, 250, 6) + C(126, 18, 14)) + G('rotate(30 200 200)', R(268, 20, 12, 250, 6) + C(274, 18, 14)) +
+    C(200, 244, 130) + L('M90 180 Q200 230 300 160 M76 240 Q200 290 326 220 M90 310 Q200 340 316 290 M150 128 Q120 240 160 368 M240 120 Q290 240 250 370') + L('M330 260 Q380 300 350 360 Q330 390 380 396'),
+  ainak: () => tube('M40 200 L18 150 M360 200 L382 150', 10) + C(120, 214, 78) + C(280, 214, 78) + tube('M192 204 Q200 184 208 204', 12) + L('M80 180 Q90 160 110 154 M240 180 Q250 160 270 154'),
+  okhli: () => G('rotate(28 240 170)', R(220, 40, 40, 240, 20)) + R(130, 352, 140, 32, 8) + P('M80 222 L320 222 Q310 340 260 358 L140 358 Q90 340 80 222Z') + E(200, 222, 120, 28) + E(200, 222, 92, 16) + L('M100 280 Q200 300 300 280'),
+  ektara: () => poly([[150, 270], [192, 62], [200, 62], [172, 270]]) + poly([[250, 270], [208, 62], [200, 62], [228, 270]]) + R(184, 36, 32, 30, 6) +
+    C(200, 312, 82) + C(200, 312, 52) + L('M200 66 L200 330') + C(200, 336, 6, 'k'),
+});
+
+/* ===== Nature scenes (full 1000x1000) ===== */
+const put = (key, x, y, s, flip) => `<g transform="${flip ? `translate(${f(x + 400 * s)} ${f(y)}) scale(${f(-s)} ${f(s)})` : `translate(${f(x)} ${f(y)}) scale(${+s.toFixed(4)})`}" style="--sw:${+(6 / s).toFixed(3)}">${LIB[key]()}</g>`;
+const NATURE = {
+  house: () => FR + sun(150, 150, 60) + cloud(720, 140, 260) + L('M18 760 L982 760') +
+    R(590, 270, 50, 130) + Bp(615, 230, 34, 24, 7) + Bp(650, 170, 26, 18, 7) + R(300, 440, 380, 320, 6) + poly([[264, 452], [490, 250], [716, 452]]) + C(490, 370, 34) +
+    R(445, 600, 100, 160, 10) + C(525, 685, 7) + R(330, 500, 92, 82, 6) + L('M376 500 L376 582 M330 541 L422 541') + R(558, 500, 92, 82, 6) + L('M604 500 L604 582 M558 541 L650 541') +
+    P('M445 760 L545 760 L610 982 L380 982Z') + tree(850, 770, 1.3) + smallFlower(130, 700, 26) + smallFlower(220, 720, 22) + grass(120, 900) + grass(880, 900),
+  mountains: () => FR + sun(500, 300, 70) + poly([[18, 700], [250, 300], [480, 700]]) + poly([[380, 700], [650, 240], [920, 700]]) + poly([[800, 700], [920, 440], [982, 540], [982, 700]]) +
+    poly([[210, 370], [250, 300], [292, 372], [270, 360], [250, 386], [230, 360]]) + poly([[604, 320], [650, 240], [698, 322], [674, 310], [650, 340], [626, 310]]) +
+    L('M18 700 L982 700') + P('M560 700 Q520 760 600 820 Q700 900 640 982 L420 982 Q500 900 440 840 Q380 770 520 700Z') + pine(130, 890, 1.2) + pine(860, 900, 1.1) + bird(330, 140) + bird(400, 110, 0.8) + bird(780, 150),
+  rainbow: () => FR + [430, 380, 330, 280, 230, 180].map(r => P(`M${500 - r} 720 A${r} ${r} 0 0 1 ${500 + r} 720Z`)).join('') + cloud(170, 720, 320) + cloud(830, 720, 320) +
+    L('M18 840 Q260 790 500 840 Q740 890 982 830') + bird(150, 160) + bird(220, 130, 0.8) + bird(840, 150) + grass(500, 960) + smallFlower(150, 880, 22) + smallFlower(860, 880, 22),
+  appletree: () => FR + L('M18 900 Q500 860 982 900') + P('M440 960 L460 600 Q420 560 380 540 L400 520 Q450 540 480 560 L490 480 L530 480 L540 560 Q580 530 620 520 L630 540 Q580 570 560 610 L580 960Z') +
+    Bp(500, 360, 340, 250, 15) + [[350, 300], [480, 220], [620, 280], [300, 440], [700, 420], [440, 400], [580, 470], [520, 320]].map(([x, y]) => C(x, y, 32) + L(`M${x} ${y - 32} L${x + 6} ${y - 48}`)).join('') +
+    R(720, 830, 170, 110, 16) + C(760, 820, 26) + C(810, 812, 26) + C(860, 822, 26) + L('M720 870 L890 870 M720 905 L890 905') + C(200, 900, 30) + grass(120, 960) + grass(350, 970, 0.8),
+  garden: () => FR + sun(870, 140, 55) + cloud(250, 130, 230) + put('butterfly', 560, 120, 0.42) +
+    [[200, 'f'], [500, 't'], [800, 's']].map(([x, k]) => L(`M${x} 770 L${x} 470`) + E(x - 40, 650, 44, 18, -30) + E(x + 40, 610, 44, 18, 30) +
+      (k === 'f' ? flower(x, 420, 110, 6) : k === 't' ? P(`M${x - 70} 380 L${x - 70} 470 Q${x} 520 ${x + 70} 470 L${x + 70} 380 L${x + 35} 420 L${x} 370 L${x - 35} 420Z`) : flower(x, 420, 100, 10) + C(x, 420, 45)) +
+      poly([[x - 75, 800], [x + 75, 800], [x + 55, 960], [x - 55, 960]]) + R(x - 85, 770, 170, 40, 8)).join('') + L('M18 960 L982 960'),
+  hut: () => FR + sun(140, 140, 55) + cloud(560, 120, 220) + L('M18 800 L982 800') +
+    R(330, 540, 340, 260, 6) + P('M280 560 L500 290 L720 560 Q500 610 280 560Z') + L('M500 290 L400 572 M500 290 L460 580 M500 290 L540 580 M500 290 L600 572 M330 470 Q500 500 670 470') +
+    P('M450 800 L450 680 Q500 630 550 680 L550 800Z') + R(370, 610, 60, 60, 6) + L('M400 610 L400 670') +
+    P('M840 970 Q810 700 870 420 L902 426 Q850 700 876 970Z') + [-160, -110, -60, -10, 40].map(a => G(`rotate(${a} 886 420)`, E(980, 420, 100, 28))).join('') + C(870, 450, 20) + C(906, 456, 20) +
+    R(70, 790, 170, 130, 8) + E(155, 790, 85, 22) + L('M84 790 L84 650 M226 790 L226 650') + poly([[60, 660], [155, 600], [250, 660]]) + L('M155 660 L155 720') + R(140, 720, 30, 26, 4) + grass(560, 930) + grass(320, 950),
+  sunflower: () => FR + cloud(200, 120, 220) + put('bee', 700, 90, 0.4) +
+    [[380, 380, 160, 960], [740, 560, 110, 960]].map(([x, y, r, b]) => R(x - 12, y, 24, b - y) + E(x - 60, y + r + 120, 70, 26, -30) + E(x + 60, y + r + 60, 70, 26, 30) +
+      [...Array(16)].map((_, i) => G(`rotate(${i * 22.5} ${x} ${y})`, E(x, y - r * 0.78, r * 0.18, r * 0.36))).join('') + C(x, y, r * 0.52) +
+      [...Array(10)].map((_, i) => C(x + r * 0.3 * Math.cos(i * 0.63), y + r * 0.3 * Math.sin(i * 0.63), 6)).join('')).join('') + L('M18 940 Q500 900 982 940'),
+  rain: () => FR + cloud(300, 170, 340) + cloud(720, 150, 300) +
+    [[160, 330], [260, 300], [380, 360], [620, 300], [760, 340], [880, 300], [120, 520], [890, 520], [200, 420], [820, 430]].map(([x, y]) => P(`M${x} ${y} Q${x + 16} ${y + 26} ${x} ${y + 34} Q${x - 16} ${y + 26} ${x} ${y}Z`)).join('') +
+    put('umbrella', 290, 300, 1.05) + put('girl', 340, 520, 1.0) + E(220, 950, 120, 22) + E(800, 940, 110, 20) + L('M18 920 L180 920 M960 920 L982 920'),
+  night: () => FR + P('M820 80 A90 90 0 1 0 920 220 A70 70 0 1 1 820 80Z') + star(200, 120, 28, 12) + star(420, 170, 22, 9) + star(620, 100, 26, 11) + star(140, 300, 18, 8) + star(520, 280, 14, 6) +
+    L('M18 820 Q500 780 982 820') + pine(110, 830, 1.5) + pine(900, 840, 1.4) +
+    poly([[290, 820], [500, 440], [710, 820]]) + poly([[460, 820], [500, 600], [540, 820]]) + L('M500 440 L500 400 L540 412 L500 424') +
+    R(700, 880, 140, 22, 10, null, 20) + R(700, 880, 140, 22, 10, null, -20) + P('M770 880 Q720 800 760 760 Q770 800 790 790 Q800 740 830 720 Q850 800 810 880Z'),
+  desert: () => FR + sun(820, 170, 80) + L('M18 760 Q250 690 500 760 Q750 830 982 740 M18 880 Q300 830 600 880 Q800 910 982 870') +
+    tube('M380 820 L380 420 M380 640 L270 640 L270 520 M380 580 L490 580 L490 480', 80) + L('M360 460 L344 452 M400 500 L416 494 M360 560 L344 556 M400 700 L416 694 M280 560 L264 556') +
+    tube('M150 900 L150 780 M150 840 L110 840 L110 800', 40) + put('camel', 560, 500, 0.95) + bird(200, 140) + bird(270, 170, 0.8),
+  beach: () => FR + sun(800, 150, 60) + cloud(420, 110, 200) + L('M18 520 L982 520 M60 570 Q100 550 140 570 M300 600 Q340 580 380 600 M700 580 Q740 560 780 580') +
+    put('boat', 520, 310, 0.5) + L('M18 700 Q300 650 600 700 Q800 730 982 690') +
+    P('M170 960 Q150 700 250 440 L280 450 Q190 700 210 960Z') + [-170, -120, -70, -20, 20].map(a => G(`rotate(${a} 265 440)`, E(370, 440, 110, 30))).join('') + C(250, 470, 20) + C(285, 474, 20) +
+    R(640, 780, 220, 140, 4) + R(690, 700, 120, 90) + L('M640 780 L640 760 L670 760 L670 780 M830 780 L830 760 L860 760 L860 780 M690 700 L690 680 L720 680 L720 700 M780 700 L780 680 L810 680 L810 700') +
+    P('M725 920 L725 860 Q750 830 775 860 L775 920Z') + L('M750 680 L750 620 L790 634 L750 648') + put('ball', 420, 820, 0.32) + shell(560, 950, 1),
+  mushroom: () => FR + sun(150, 140, 55) + cloud(760, 120, 220) + L('M18 860 L982 860') +
+    R(380, 500, 240, 360, 30) + P('M180 520 Q200 240 500 230 Q800 240 820 520 Q500 580 180 520Z') + C(320, 420, 36) + C(500, 320, 44) + C(680, 420, 36) + C(420, 470, 20) + C(600, 470, 20) +
+    P('M455 860 L455 730 Q500 690 545 730 L545 860Z') + C(410, 640, 34) + C(590, 640, 34) + L('M376 640 L444 640 M556 640 L624 640') +
+    R(130, 760, 40, 100, 14) + P('M90 770 Q100 690 150 688 Q200 690 210 770Z') + C(150, 730, 12) + R(830, 790, 30, 70, 10) + P('M800 800 Q808 740 845 738 Q882 740 890 800Z') +
+    P('M455 860 L545 860 L590 982 L410 982Z') + smallFlower(260, 780, 22) + smallFlower(740, 760, 24),
+};
+
+/* ===== Page builder ===== */
+const STY = '<style>*{fill:#fff;stroke:#2b2b2b;stroke-width:var(--sw,6);stroke-linejoin:round;stroke-linecap:round}.o{fill:none}.k{fill:#2b2b2b}.w{fill:#fff;stroke:none}.b1{fill:none}.b2{fill:none;stroke:#fff}.t,.tt{font-family:Arial Black,Roboto,Arial,sans-serif;font-weight:900}.tt{stroke-width:calc(var(--sw,6)*0.42)}.tdev{font-family:sans-serif;font-weight:700}</style>';
+const wrap = c => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">${STY}${c}</svg>`;
+const NAMES = {
+  cat: 'बिल्ली', dog: 'कुत्ता', lion: 'शेर', tiger: 'बाघ', bear: 'भालू', panda: 'पांडा', pig: 'सूअर', cow: 'गाय', mouse: 'चूहा', rabbit: 'खरगोश', monkey: 'बंदर', fox: 'लोमड़ी',
+  sheep: 'भेड़', koala: 'कोआला', elephant: 'हाथी', giraffe: 'जिराफ़', turtle: 'कछुआ', snail: 'घोंघा', frog: 'मेंढक', crocodile: 'मगरमच्छ', camel: 'ऊँट', hippo: 'दरियाई घोड़ा',
+  horse: 'घोड़ा', zebra: 'ज़ेबरा', deer: 'हिरण', owl: 'उल्लू', parrot: 'तोता', peacock: 'मोर', duck: 'बत्तख', hen: 'मुर्गी', penguin: 'पेंगुइन', butterfly: 'तितली', bee: 'मधुमक्खी',
+  ladybug: 'लेडीबग', chick: 'चूज़ा', nest: 'घोंसला', fish: 'मछली', whale: 'व्हेल', octopus: 'ऑक्टोपस', crab: 'केकड़ा', starfish: 'तारा मछली', jellyfish: 'जेलीफ़िश', dolphin: 'डॉल्फ़िन',
+  seahorse: 'समुद्री घोड़ा', puffer: 'पफ़र मछली', shark: 'शार्क', girl: 'गुड़िया', boy: 'टोपी वाला बच्चा', princess: 'राजकुमारी', boy2: 'छोटा भैया', robot: 'रोबोट', snowman: 'बर्फ़ का पुतला',
+  alien: 'एलियन', monster: 'प्यारा मॉन्स्टर', astronaut: 'अंतरिक्ष यात्री', clown: 'जोकर', teddy: 'टेडी बियर', om: 'ॐ', swastik: 'स्वस्तिक', diya: 'दीया', kalash: 'कलश', mandir: 'मंदिर',
+  lotus: 'कमल', ganesh: 'गणेश जी', bansuri: 'बांसुरी और मोरपंख', shivling: 'शिवलिंग', trishul: 'त्रिशूल और डमरू', shankh: 'शंख', ghanta: 'घंटी', tirthankar: 'तीर्थंकर भगवान',
+  ahimsa: 'अहिंसा', matki: 'माखन मटकी', rangoli8: 'रंगोली 1', rangoli12: 'रंगोली 2', rangoli16: 'रंगोली 3', car: 'कार', bus: 'स्कूल बस', truck: 'ट्रक', train: 'रेलगाड़ी', airplane: 'हवाई जहाज़',
+  helicopter: 'हेलीकॉप्टर', boat: 'नाव', bicycle: 'साइकिल', rocket: 'रॉकेट', auto: 'ऑटो रिक्शा', tractor: 'ट्रैक्टर', van: 'वैन', apple: 'सेब', banana: 'केला', mango: 'आम', grapes: 'अंगूर',
+  strawberry: 'स्ट्रॉबेरी', watermelon: 'तरबूज़', pineapple: 'अनानास', orange: 'संतरा', cherry: 'चेरी', pear: 'नाशपाती', carrot: 'गाजर', tomato: 'टमाटर', brinjal: 'बैंगन', anar: 'अनार',
+  ball: 'गेंद', kite: 'पतंग', balloons: 'गुब्बारे', icecream: 'आइसक्रीम', cupcake: 'कपकेक', cake: 'केक', gift: 'तोहफ़ा', drum: 'ढोल', lattu: 'लट्टू', xylophone: 'ज़ाइलोफ़ोन', yoyo: 'यो-यो', crown: 'मुकुट',
+  house: 'मेरा घर', mountains: 'पहाड़ और नदी', rainbow: 'इंद्रधनुष', appletree: 'सेब का पेड़', garden: 'फूलों के गमले', hut: 'गाँव की झोपड़ी', sunflower: 'सूरजमुखी', rain: 'बारिश',
+  night: 'तारों भरी रात', desert: 'रेगिस्तान', beach: 'समुद्र किनारा', mushroom: 'मशरूम घर',
+};
+const CATS = [
+  ['all', 'सब', '✨'], ['ani', 'जानवर', '🐘'], ['bird', 'पक्षी', '🦜'], ['sea', 'समुद्र', '🐠'], ['toon', 'कार्टून', '🤖'], ['bhakti', 'भक्ति', '🪔'], ['nature', 'प्रकृति', '🌳'],
+  ['veh', 'गाड़ियाँ', '🚗'], ['fruit', 'फल-सब्ज़ी', '🍎'], ['toy', 'खिलौने', '🎈'], ['abc', 'ABC', '🔤'], ['num', 'गिनती', '🔢'], ['swar', 'स्वर', 'अ'], ['photo', 'मेरी फोटो', '📷'],
+];
+const GW = ch => /[MWmw@]/.test(ch) ? 1.0 : /[IJijlft\-' ]/.test(ch) ? 0.42 : /[A-Z]/.test(ch) ? 0.8 : 0.68;
+const fitSize = (str, maxW, maxS) => Math.min(maxS, maxW / [...str].reduce((a, c) => a + GW(c), 0));
+const SLOT = { x: 150, y: 240, s: 1.75 };
+function subjectPage(key, bg, flip) {
+  return () => wrap(BG[bg]() + put(key, SLOT.x, SLOT.y, SLOT.s, flip));
+}
+function buildPages() {
+  const pages = [];
+  const add = (cat, key, bgs) => bgs.forEach((bg, i) => pages.push({ id: `${cat}-${key}-${i + 1}`, cat, name: NAMES[key] + (bgs.length > 1 ? ` ${i + 1}` : ''), svg: subjectPage(key, bg, i % 2 === 1) }));
+  // Animals — every animal appears in two different scenes (second one mirrored)
+  const farm = ['cow', 'pig', 'sheep', 'horse', 'dog', 'cat', 'rabbit', 'mouse'];
+  const wild = ['lion', 'tiger', 'elephant', 'giraffe', 'monkey', 'zebra', 'hippo', 'crocodile', 'deer', 'camel', 'frog', 'turtle', 'snail'];
+  const cold = ['bear', 'panda', 'fox', 'koala'];
+  farm.forEach(k => add('ani', k, ['meadow', 'farm']));
+  wild.forEach(k => add('ani', k, ['jungle', 'meadow']));
+  cold.forEach(k => add('ani', k, ['snow', 'garden']));
+  ['owl', 'parrot', 'peacock', 'duck', 'hen', 'penguin', 'butterfly', 'bee', 'ladybug', 'chick'].forEach(k => add('bird', k, k === 'penguin' ? ['snow', 'night'] : k === 'owl' ? ['night', 'jungle'] : ['garden', 'sky']));
+  ['fish', 'whale', 'octopus', 'crab', 'starfish', 'jellyfish', 'dolphin', 'seahorse', 'puffer', 'shark'].forEach(k => add('sea', k, ['sea', 'sea2']));
+  ['girl', 'boy', 'princess', 'boy2', 'robot', 'snowman', 'alien', 'monster', 'astronaut', 'clown', 'teddy'].forEach(k => add('toon', k, k === 'astronaut' || k === 'alien' ? ['space', 'night'] : k === 'snowman' ? ['snow', 'night'] : ['room', 'stage']));
+  ['om', 'swastik', 'diya', 'kalash', 'mandir', 'lotus', 'ganesh', 'bansuri', 'shivling', 'trishul', 'shankh', 'ghanta', 'tirthankar', 'ahimsa', 'matki', 'rangoli8', 'rangoli12', 'rangoli16'].forEach(k => add('bhakti', k, ['toran']));
+  Object.keys(NATURE).forEach(k => pages.push({ id: `nature-${k}`, cat: 'nature', name: NAMES[k], svg: () => wrap(NATURE[k]()) }));
+  [['car', 'road'], ['bus', 'road'], ['truck', 'road'], ['train', 'meadow'], ['airplane', 'sky'], ['helicopter', 'sky'], ['boat', 'water'], ['bicycle', 'garden'], ['rocket', 'space'], ['auto', 'road'], ['tractor', 'farm'], ['van', 'road']].forEach(([k, bg]) => add('veh', k, [bg]));
+  ['apple', 'banana', 'mango', 'grapes', 'strawberry', 'watermelon', 'pineapple', 'orange', 'cherry', 'pear', 'carrot', 'tomato', 'brinjal', 'anar'].forEach(k => add('fruit', k, ['plate']));
+  ['ball', 'kite', 'balloons', 'icecream', 'cupcake', 'cake', 'gift', 'drum', 'lattu', 'xylophone', 'yoyo', 'crown'].forEach(k => add('toy', k, ['party']));
+  // ABC
+  const ABC = [['apple', 'Apple'], ['ball', 'Ball'], ['cat', 'Cat'], ['dog', 'Dog'], ['elephant', 'Elephant'], ['fish', 'Fish'], ['grapes', 'Grapes'], ['hen', 'Hen'], ['icecream', 'Ice cream'], ['jellyfish', 'Jellyfish'], ['kite', 'Kite'], ['lion', 'Lion'], ['mango', 'Mango'],
+    ['nest', 'Nest'], ['owl', 'Owl'], ['parrot', 'Parrot'], ['princess', 'Queen'], ['rabbit', 'Rabbit'], ['starfun', 'Star'], ['tiger', 'Tiger'], ['umbrella', 'Umbrella'], ['van', 'Van'], ['watermelon', 'Watermelon'], ['xylophone', 'Xylophone'], ['yoyo', 'Yo-yo'], ['zebra', 'Zebra']];
+  ABC.forEach(([k, w], i) => { const ch = String.fromCharCode(65 + i); pages.push({ id: `abc-${ch}`, cat: 'abc', name: `${ch} - ${w}`, svg: () => wrap(BG.border() + TX(290, 470 + fitSize(ch + ch.toLowerCase(), 440, 380) * 0.36, fitSize(ch + ch.toLowerCase(), 440, 380), ch + ch.toLowerCase()) + put(k, 540, 130, 1.0) + TX(500, 900, fitSize(w, 820, 170), w)) }); });
+  // Numbers 1-10
+  const NUM = [['elephant', 'ONE', 'एक'], ['heart', 'TWO', 'दो'], ['apple', 'THREE', 'तीन'], ['fish', 'FOUR', 'चार'], ['flower', 'FIVE', 'पाँच'], ['ball', 'SIX', 'छह'], ['strawberry', 'SEVEN', 'सात'], ['butterfly', 'EIGHT', 'आठ'], ['mango', 'NINE', 'नौ'], ['star', 'TEN', 'दस']];
+  NUM.forEach(([k, en, hi], i) => {
+    const n = i + 1;
+    pages.push({ id: `num-${n}`, cat: 'num', name: `${n} - ${hi}`, svg: () => {
+      let s = BG.border() + TX(250, 430, 380, String(n)) + TX(680, 250, 120, en) + TX(680, 410, 130, hi, 'tdev');
+      const rows = n > 5 ? 2 : 1, cols = Math.ceil(n / rows), cw = 860 / cols, rh = rows === 1 ? 440 : 230, sz = Math.min(cw, rh) * 0.9;
+      for (let j = 0; j < n; j++) {
+        const r = Math.floor(j / cols), c = j % cols, inRow = r === rows - 1 ? n - cols * (rows - 1) : cols, off = (cols - inRow) * cw / 2;
+        const cx = 70 + off + c * cw + cw / 2, cy = 480 + r * rh + rh / 2;
+        if (k === 'heart') s += heart(cx, cy, sz * 0.36); else if (k === 'flower') s += L(`M${cx} ${cy} L${cx} ${cy + sz * 0.45}`) + flower(cx, cy - sz * 0.08, sz * 0.36, 6); else if (k === 'star') s += star(cx, cy, sz * 0.46, sz * 0.2);
+        else s += put(k, cx - sz / 2, cy - sz / 2, sz / 400);
+      }
+      return wrap(s);
+    } });
+  });
+  // Hindi swar
+  const SWAR = [['अ', 'अनार', 'anar'], ['आ', 'आम', 'mango'], ['इ', 'इमली', 'imli'], ['ई', 'ईख', 'ganna'], ['उ', 'उल्लू', 'owl'], ['ऊ', 'ऊन', 'oon'], ['ए', 'एकतारा', 'ektara'], ['ऐ', 'ऐनक', 'ainak'], ['ओ', 'ओखली', 'okhli'], ['औ', 'औरत', 'girl'], ['अं', 'अंगूर', 'grapes']];
+  SWAR.forEach(([ch, w, k], i) => pages.push({ id: `swar-${i + 1}`, cat: 'swar', name: `${ch} - ${w}`, svg: () => wrap(BG.border() + TX(290, 560, 420, ch, 'tdev') + put(k, 540, 130, 1.0) + TX(500, 900, 170, w, 'tdev')) }));
+  return pages;
+}
+
+</script>
+<script>
+/* ===== रंग भरो — app ===== */
+const VERSION = 'v1.0.0';
+const W = 1000;
+const $ = id => document.getElementById(id);
+const PAGES = buildPages();
+const PALETTE = [
+  ['#E53935', 'लाल'], ['#FF7043', 'नारंगी लाल'], ['#FB8C00', 'नारंगी'], ['#FDD835', 'पीला'], ['#FFF176', 'हल्का पीला'], ['#C0CA33', 'नींबू हरा'],
+  ['#7CB342', 'हरा'], ['#2E7D32', 'गहरा हरा'], ['#26A69A', 'फ़िरोज़ी'], ['#4FC3F7', 'आसमानी'], ['#1E88E5', 'नीला'], ['#283593', 'गहरा नीला'],
+  ['#8E24AA', 'बैंगनी'], ['#BA68C8', 'हल्का बैंगनी'], ['#EC407A', 'गुलाबी'], ['#F8BBD0', 'हल्का गुलाबी'], ['#FFCCBC', 'त्वचा'], ['#D7A27A', 'गेहुँआ'],
+  ['#8D6E63', 'भूरा'], ['#5D4037', 'गहरा भूरा'], ['#B0BEC5', 'हल्का स्लेटी'], ['#757575', 'स्लेटी'], ['#3A3A3A', 'काला'], ['#FFFFFF', 'रबर (मिटाओ)'], ['magic', 'जादुई रंग'],
+];
+
+/* ---------- storage (IndexedDB) ---------- */
+const DB = (() => {
+  let dbp;
+  const open = () => dbp || (dbp = new Promise((res, rej) => {
+    const r = indexedDB.open('rangbharo', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('art'); r.result.createObjectStore('photos'); };
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  const tx = async (store, mode, fn) => { const db = await open(); return new Promise((res, rej) => { const t = db.transaction(store, mode); const q = fn(t.objectStore(store)); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }); };
+  return {
+    get: (s, k) => tx(s, 'readonly', o => o.get(k)).catch(() => null),
+    put: (s, k, v) => tx(s, 'readwrite', o => o.put(v, k)).catch(() => null),
+    del: (s, k) => tx(s, 'readwrite', o => o.delete(k)).catch(() => null),
+    all: (s) => tx(s, 'readonly', o => o.getAll()).catch(() => []),
+    keys: (s) => tx(s, 'readonly', o => o.getAllKeys()).catch(() => []),
+  };
+})();
+const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+
+/* ---------- sound ---------- */
+let soundOn = LS.get('sound', true), actx;
+function tone(f1, f2, dur = 0.12, type = 'sine', vol = 0.18) {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+    o.type = type; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur + 0.05);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.06);
+  } catch (e) { }
+}
+const popSound = () => { tone(420, 880, 0.12); setTimeout(() => tone(880, 1320, 0.08, 'triangle', 0.08), 60); };
+const tickSound = () => tone(1200, 900, 0.05, 'triangle', 0.08);
+function toast(msg, ms = 2200) { const t = $('toast'); t.textContent = msg; t.classList.remove('hide'); t.style.opacity = 1; clearTimeout(t._h); t._h = setTimeout(() => { t.style.opacity = 0; setTimeout(() => t.classList.add('hide'), 300); }, ms); }
+function confirmBox(title, msg, okTxt = 'हाँ') {
+  return new Promise(res => {
+    const m = document.createElement('div'); m.className = 'modal';
+    m.innerHTML = `<div class="box"><h3>${title}</h3><p>${msg}</p><div class="btns"><button class="no">नहीं</button><button class="ok">${okTxt}</button></div></div>`;
+    document.body.appendChild(m);
+    m.querySelector('.no').onclick = () => { m.remove(); res(false); };
+    m.querySelector('.ok').onclick = () => { m.remove(); res(true); };
+  });
+}
+const svgURL = s => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+
+/* ---------- home ---------- */
+let curCat = LS.get('cat', 'all'), doneSet = new Set(), photos = [];
+const thumbObs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const im = e.target; if (im.dataset.src) { im.src = im.dataset.src; delete im.dataset.src; } thumbObs.unobserve(im); } }), { rootMargin: '300px' });
+async function loadMeta() {
+  doneSet = new Set(await DB.keys('art'));
+  photos = (await DB.all('photos')).sort((a, b) => b.t - a.t);
+}
+function catPages(cat) {
+  const ph = photos.map(p => ({ id: p.id, cat: 'photo', name: p.name, photo: p }));
+  if (cat === 'photo') return ph;
+  if (cat === 'all') return PAGES.concat(ph);
+  return PAGES.filter(p => p.cat === cat);
+}
+function renderChips() {
+  $('chips').innerHTML = CATS.map(([k, n, e]) => `<button class="chip${k === curCat ? ' on' : ''}" data-k="${k}"><span class="e">${e}</span>${n}</button>`).join('');
+  $('chips').querySelectorAll('.chip').forEach(b => b.onclick = () => { curCat = b.dataset.k; LS.set('cat', curCat); tickSound(); renderChips(); renderGrid(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  const on = $('chips').querySelector('.on'); if (on) on.scrollIntoView({ inline: 'center', block: 'nearest' });
+}
+async function renderGrid() {
+  const list = catPages(curCat);
+  const g = $('grid'); g.innerHTML = '';
+  if (curCat === 'photo' || curCat === 'all') {
+    const a = document.createElement('button'); a.className = 'card add';
+    a.innerHTML = '<div class="big">📷</div><b>अपनी किताब का पन्ना</b><small>ड्रॉइंग बुक के पन्ने की फोटो लें — वो रंग भरने वाला चित्र बन जाएगा</small>';
+    a.onclick = () => $('photoIn').click();
+    g.appendChild(a);
+  }
+  const thumbs = {};
+  for (const p of list) {
+    const c = document.createElement('button'); c.className = 'card';
+    const im = document.createElement('img'); im.className = 'th'; im.alt = p.name; im.decoding = 'async';
+    c.appendChild(im);
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = p.name; c.appendChild(nm);
+    if (doneSet.has(p.id)) { const d = document.createElement('div'); d.className = 'done'; d.textContent = '✓'; c.appendChild(d); thumbs[p.id] = im; }
+    if (p.photo) {
+      const d = document.createElement('div'); d.className = 'del'; d.textContent = '✕';
+      d.onclick = async ev => { ev.stopPropagation(); if (await confirmBox('फोटो हटाएँ?', 'यह पन्ना और इसमें भरे रंग हट जाएँगे।', 'हटाओ')) { await DB.del('photos', p.id); await DB.del('art', p.id); await loadMeta(); renderGrid(); } };
+      c.appendChild(d);
+      im.src = p.photo.png;
+    } else { im.dataset.src = svgURL(p.svg()); thumbObs.observe(im); }
+    c.onclick = () => openPage(p, list);
+    g.appendChild(c);
+  }
+  $('countTxt').textContent = `${list.length} चित्र`;
+  const dn = list.filter(p => doneSet.has(p.id)).length;
+  $('doneTxt').textContent = dn ? `🎨 ${dn} में रंग भरा` : '';
+  // coloured thumbnails
+  for (const id in thumbs) { DB.get('art', id).then(a => { if (a && a.thumb) { thumbs[id].src = a.thumb; delete thumbs[id].dataset.src; } }); }
+}
+$('soundBtn').onclick = () => { soundOn = !soundOn; LS.set('sound', soundOn); $('soundBtn').textContent = soundOn ? '🔊' : '🔇'; tickSound(); };
+$('soundBtn').textContent = soundOn ? '🔊' : '🔇';
+
+/* ---------- install ---------- */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('installBtn').classList.remove('hide'); });
+$('installBtn').onclick = async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; $('installBtn').classList.add('hide'); };
+window.addEventListener('appinstalled', () => { $('installBtn').classList.add('hide'); toast('ऐप इंस्टॉल हो गया 🎉'); });
+
+/* ---------- paint engine ---------- */
+const view = $('view'), vctx = view.getContext('2d');
+const lineCv = document.createElement('canvas'); lineCv.width = lineCv.height = W; const lctx = lineCv.getContext('2d', { willReadFrequently: true });
+const colorCv = document.createElement('canvas'); colorCv.width = colorCv.height = W; const cctx = colorCv.getContext('2d', { willReadFrequently: true });
+const wall = new Uint8Array(W * W), mark = new Int32Array(W * W), buf = new Int32Array(W * W), stk = new Int32Array(W * W);
+let gen = 1, page = null, pageList = [], undo = [], curColor = LS.get('color', '#E53935'), dirty = false, saveTimer = null, animating = 0;
+
+function render() {
+  vctx.globalCompositeOperation = 'source-over'; vctx.drawImage(colorCv, 0, 0);
+  vctx.globalCompositeOperation = 'multiply'; vctx.drawImage(lineCv, 0, 0);
+  vctx.globalCompositeOperation = 'source-over';
+}
+function loadImg(src) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; }); }
+async function openPage(p, list, nav) {
+  page = p; pageList = list || pageList; undo = []; updUndo(); animating++;
+  $('home').classList.add('hide'); $('paint').classList.remove('hide');
+  $('pTitle').textContent = p.name;
+  if (!nav) history.pushState({ paint: 1 }, '');
+  resetZoom(); layout();
+  const im = await loadImg(p.photo ? p.photo.png : svgURL(p.svg()));
+  lctx.fillStyle = '#fff'; lctx.fillRect(0, 0, W, W); lctx.drawImage(im, 0, 0, W, W);
+  const d = lctx.getImageData(0, 0, W, W).data;
+  for (let i = 0, j = 0; i < wall.length; i++, j += 4) wall[i] = (d[j] * 0.3 + d[j + 1] * 0.59 + d[j + 2] * 0.11) < 150 ? 1 : 0;
+  cctx.fillStyle = '#fff'; cctx.fillRect(0, 0, W, W);
+  const art = await DB.get('art', p.id);
+  if (art && art.color) { try { const bm = await createImageBitmap(art.color); cctx.drawImage(bm, 0, 0); } catch (e) { } }
+  render();
+  const i = pageList.indexOf(p);
+  $('prev').style.visibility = i > 0 ? 'visible' : 'hidden';
+  $('next').style.visibility = i >= 0 && i < pageList.length - 1 ? 'visible' : 'hidden';
+  if (!LS.get('hinted', false)) { LS.set('hinted', true); setTimeout(() => toast('रंग चुनो 👇 फिर चित्र में छुओ — या रंग को खींचकर चित्र पर छोड़ो', 4500), 400); }
+}
+async function closePage() {
+  await flushSave();
+  $('paint').classList.add('hide'); $('home').classList.remove('hide');
+  await loadMeta(); renderGrid();
+}
+function nearestOpen(x, y) {
+  if (!wall[y * W + x]) return [x, y];
+  for (let r = 1; r <= 16; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+    if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+    const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= W) continue;
+    if (!wall[yy * W + xx]) return [xx, yy];
+  }
+  return null;
+}
+function pickColor() {
+  if (curColor !== 'magic') return curColor;
+  const c = PALETTE.filter(p => p[0] !== 'magic' && p[0] !== '#FFFFFF' && p[0] !== '#3A3A3A');
+  return c[Math.floor(Math.random() * c.length)][0];
+}
+function fillAt(fx, fy) {
+  if (!page) return;
+  const st = nearestOpen(Math.max(0, Math.min(W - 1, fx | 0)), Math.max(0, Math.min(W - 1, fy | 0)));
+  if (!st) return;
+  gen++; if (gen > 2e9) { mark.fill(0); gen = 1; }
+  let n = 0, sp = 0, minX = W, maxX = 0, minY = W, maxY = 0;
+  stk[sp++] = st[1] * W + st[0];
+  while (sp) {
+    const idx = stk[--sp]; if (mark[idx] === gen || wall[idx]) continue;
+    const y = (idx / W) | 0; let x = idx - y * W, xl = x, xr = x;
+    while (xl > 0 && !wall[y * W + xl - 1] && mark[y * W + xl - 1] !== gen) xl--;
+    while (xr < W - 1 && !wall[y * W + xr + 1] && mark[y * W + xr + 1] !== gen) xr++;
+    for (let i = xl; i <= xr; i++) {
+      const k = y * W + i; mark[k] = gen; buf[n++] = k;
+      if (y > 0) { const u = k - W; if (!wall[u] && mark[u] !== gen) stk[sp++] = u; }
+      if (y < W - 1) { const dn = k + W; if (!wall[dn] && mark[dn] !== gen) stk[sp++] = dn; }
+    }
+    if (xl < minX) minX = xl; if (xr > maxX) maxX = xr; if (y < minY) minY = y; if (y > maxY) maxY = y;
+  }
+  // grow 2px under the outline so colour meets the line with no white gap
+  let from = 0;
+  for (let pass = 0; pass < 3; pass++) {
+    const to = n;
+    for (let q = from; q < to; q++) {
+      const k = buf[q], y = (k / W) | 0, x = k - y * W;
+      const nb = [x > 0 ? k - 1 : -1, x < W - 1 ? k + 1 : -1, y > 0 ? k - W : -1, y < W - 1 ? k + W : -1];
+      for (const m of nb) if (m >= 0 && wall[m] && mark[m] !== gen) { mark[m] = gen; buf[n++] = m; }
+    }
+    from = to;
+  }
+  minX = Math.max(0, minX - 3); minY = Math.max(0, minY - 3); maxX = Math.min(W - 1, maxX + 3); maxY = Math.min(W - 1, maxY + 3);
+  const bw = maxX - minX + 1, bh = maxY - minY + 1;
+  const old = cctx.getImageData(minX, minY, bw, bh);
+  const col = pickColor(), r = parseInt(col.slice(1, 3), 16), g = parseInt(col.slice(3, 5), 16), b = parseInt(col.slice(5, 7), 16);
+  const nw = new ImageData(new Uint8ClampedArray(old.data), bw, bh);
+  let same = true;
+  for (let q = 0; q < n; q++) {
+    const k = buf[q], y = ((k / W) | 0) - minY, x = (k % W) - minX, j = (y * bw + x) * 4;
+    if (nw.data[j] !== r || nw.data[j + 1] !== g || nw.data[j + 2] !== b) same = false;
+    nw.data[j] = r; nw.data[j + 1] = g; nw.data[j + 2] = b; nw.data[j + 3] = 255;
+  }
+  if (same) return;
+  undo.push({ x: minX, y: minY, d: old }); if (undo.length > 40) undo.shift(); updUndo();
+  // ripple reveal animation
+  const pc = document.createElement('canvas'); pc.width = bw; pc.height = bh; pc.getContext('2d').putImageData(nw, 0, 0);
+  const t0 = performance.now(), maxR = Math.hypot(Math.max(st[0] - minX, maxX - st[0]), Math.max(st[1] - minY, maxY - st[1])) + 4, dur = Math.min(380, 120 + maxR * 0.6);
+  const myAnim = ++animating;
+  const step = now => {
+    if (myAnim !== animating) { cctx.putImageData(nw, minX, minY); render(); return; }
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    cctx.save(); cctx.beginPath(); cctx.arc(st[0], st[1], Math.max(6, maxR * e), 0, Math.PI * 2); cctx.clip(); cctx.drawImage(pc, minX, minY); cctx.restore();
+    if (k < 1) { render(); requestAnimationFrame(step); } else { cctx.putImageData(nw, minX, minY); render(); }
+  };
+  requestAnimationFrame(step);
+  popSound(); if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) { }
+  burst(fx, fy, col);
+  scheduleSave();
+}
+function burst(fx, fy, col) {
+  const rc = view.getBoundingClientRect(), x = rc.left + fx / W * rc.width, y = rc.top + fy / W * rc.height;
+  const em = ['✨', '⭐', '💫'];
+  for (let i = 0; i < 4; i++) {
+    const s = document.createElement('div'); s.className = 'burst'; s.textContent = em[i % 3];
+    const a = Math.random() * Math.PI * 2, d = 40 + Math.random() * 40;
+    s.style.left = (x - 11) + 'px'; s.style.top = (y - 14) + 'px'; s.style.setProperty('--dx', Math.cos(a) * d + 'px'); s.style.setProperty('--dy', Math.sin(a) * d + 'px');
+    document.body.appendChild(s); setTimeout(() => s.remove(), 950);
+  }
+}
+function updUndo() { $('undoBtn').disabled = !undo.length; }
+$('undoBtn').onclick = () => { const u = undo.pop(); if (!u) return; animating++; cctx.putImageData(u.d, u.x, u.y); render(); updUndo(); tickSound(); scheduleSave(); };
+$('clearBtn').onclick = async () => {
+  if (!(await confirmBox('सारे रंग मिटाएँ?', 'चित्र फिर से सफ़ेद हो जाएगा।', 'मिटाओ'))) return;
+  animating++; undo.push({ x: 0, y: 0, d: cctx.getImageData(0, 0, W, W) }); updUndo();
+  cctx.fillStyle = '#fff'; cctx.fillRect(0, 0, W, W); render(); scheduleSave();
+};
+function scheduleSave() { dirty = true; clearTimeout(saveTimer); saveTimer = setTimeout(flushSave, 900); }
+async function flushSave() {
+  clearTimeout(saveTimer); if (!dirty || !page) return; dirty = false;
+  const id = page.id;
+  const blob = await new Promise(r => colorCv.toBlob(r, 'image/png'));
+  const tc = document.createElement('canvas'); tc.width = tc.height = 300; tc.getContext('2d').drawImage(view, 0, 0, 300, 300);
+  await DB.put('art', id, { color: blob, thumb: tc.toDataURL('image/jpeg', 0.82), t: Date.now() });
+}
+$('shareBtn').onclick = async () => {
+  await flushSave();
+  const blob = await new Promise(r => view.toBlob(r, 'image/png'));
+  const name = `rang-bharo-${(page.name || 'chitra').replace(/[^\wऀ-ॿ]+/g, '-')}.png`;
+  const file = new File([blob], name, { type: 'image/png' });
+  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'मेरा रंगीन चित्र 🎨' }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast('चित्र सेव हो गया ✅');
+};
+$('backBtn').onclick = () => history.back();
+window.addEventListener('popstate', () => { if (!$('paint').classList.contains('hide')) closePage(); });
+const goRel = async d => { const i = pageList.indexOf(page) + d; if (i >= 0 && i < pageList.length) { await flushSave(); tickSound(); openPage(pageList[i], null, true); } };
+$('prev').onclick = () => goRel(-1); $('next').onclick = () => goRel(1);
+document.addEventListener('visibilitychange', () => { if (document.hidden) flushSave(); });
+
+/* ---------- palette & drag-to-fill ---------- */
+function setColor(c) {
+  curColor = c; LS.set('color', c);
+  document.querySelectorAll('.sw').forEach(s => s.classList.toggle('on', s.dataset.c === c));
+  const p = PALETTE.find(p => p[0] === c);
+  $('curDot').style.background = c === 'magic' ? 'conic-gradient(#ff4d4d,#ffb300,#ffee58,#43d17a,#2fa8ff,#8a5cff,#ff4da6,#ff4d4d)' : c;
+  $('curName').textContent = p ? p[1] : '';
+}
+$('pal').innerHTML = PALETTE.map(([c]) => `<button class="sw${c === '#FFFFFF' ? ' white' : ''}${c === 'magic' ? ' magic' : ''}" data-c="${c}" style="${c !== 'magic' ? 'background:' + c : ''}"></button>`).join('');
+$('pal').querySelectorAll('.sw').forEach(sw => {
+  let sx, sy, dragging = false, pid = null;
+  sw.addEventListener('pointerdown', e => { pid = e.pointerId; sx = e.clientX; sy = e.clientY; dragging = false; try { sw.setPointerCapture(pid); } catch (er) { } });
+  sw.addEventListener('pointermove', e => {
+    if (e.pointerId !== pid) return;
+    if (!dragging && Math.abs(e.clientY - sy) > 14 && Math.abs(e.clientY - sy) > Math.abs(e.clientX - sx)) {
+      dragging = true;
+      setColor(sw.dataset.c); const gh = $('ghost'); gh.style.background = sw.dataset.c === 'magic' ? 'conic-gradient(#ff4d4d,#ffb300,#ffee58,#43d17a,#2fa8ff,#8a5cff,#ff4da6,#ff4d4d)' : sw.dataset.c; gh.classList.remove('hide');
+    }
+    if (dragging) { const gh = $('ghost'); gh.style.left = e.clientX + 'px'; gh.style.top = e.clientY + 'px'; }
+  });
+  const end = e => {
+    if (e.pointerId !== pid) return; pid = null;
+    if (dragging) {
+      $('ghost').classList.add('hide'); dragging = false;
+      const rc = view.getBoundingClientRect(), x = e.clientX, y = e.clientY - 18;
+      if (x >= rc.left && x <= rc.right && y >= rc.top && y <= rc.bottom) fillAt((x - rc.left) / rc.width * W, (y - rc.top) / rc.height * W);
+    } else if (Math.abs(e.clientX - sx) < 10 && Math.abs(e.clientY - sy) < 10) { setColor(sw.dataset.c); tickSound(); }
+  };
+  sw.addEventListener('pointerup', end); sw.addEventListener('pointercancel', e => { if (e.pointerId === pid) { pid = null; dragging = false; $('ghost').classList.add('hide'); } });
+});
+setColor(curColor);
+
+/* ---------- stage: tap to fill, pinch zoom, pan ---------- */
+let Z = 1, panX = 0, panY = 0, base = 300;
+const stage = $('stage'), zb = $('zoomBox');
+function layout() {
+  const sw = stage.clientWidth, sh = stage.clientHeight;
+  base = Math.max(200, Math.min(sw - 24, sh - 20));
+  view.style.width = view.style.height = base + 'px';
+  if (Z === 1) { panX = (sw - base) / 2; panY = (sh - base) / 2; }
+  applyZ();
+}
+function clampPan() {
+  const sw = stage.clientWidth, sh = stage.clientHeight, s = base * Z;
+  if (s <= sw) panX = (sw - s) / 2; else panX = Math.min(40, Math.max(sw - s - 40, panX));
+  if (s <= sh) panY = (sh - s) / 2; else panY = Math.min(40, Math.max(sh - s - 40, panY));
+}
+function applyZ() { clampPan(); zb.style.transform = `translate(${panX}px,${panY}px) scale(${Z})`; $('zreset').classList.toggle('hide', Z <= 1.01); }
+function resetZoom() { Z = 1; layout(); }
+$('zreset').onclick = resetZoom;
+window.addEventListener('resize', () => { if (!$('paint').classList.contains('hide')) layout(); });
+const ptrs = new Map(); let gesture = null;
+stage.addEventListener('pointerdown', e => {
+  if (e.target.closest('.nav,#zreset')) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  try { stage.setPointerCapture(e.pointerId); } catch (er) { }
+  if (ptrs.size === 1) gesture = { type: 'tap', sx: e.clientX, sy: e.clientY, tx: panX, ty: panY, moved: false };
+  else if (ptrs.size === 2) {
+    const [a, b] = [...ptrs.values()];
+    gesture = { type: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y), z0: Z, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, tx: panX, ty: panY };
+  }
+});
+stage.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId) || !gesture) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  const r = stage.getBoundingClientRect();
+  if (gesture.type === 'pinch' && ptrs.size >= 2) {
+    const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const nz = Math.max(1, Math.min(5, gesture.z0 * d / gesture.d0));
+    const lx = (gesture.mx - r.left - gesture.tx) / gesture.z0, ly = (gesture.my - r.top - gesture.ty) / gesture.z0;
+    Z = nz; panX = mx - r.left - lx * nz; panY = my - r.top - ly * nz; applyZ();
+  } else if (gesture.type === 'tap') {
+    const dx = e.clientX - gesture.sx, dy = e.clientY - gesture.sy;
+    if (Math.hypot(dx, dy) > 12) gesture.moved = true;
+    if (gesture.moved && Z > 1.01) { panX = gesture.tx + dx; panY = gesture.ty + dy; applyZ(); }
+  }
+});
+const stEnd = e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if (gesture && gesture.type === 'tap' && !gesture.moved && e.type === 'pointerup') {
+    const rc = view.getBoundingClientRect();
+    if (e.clientX >= rc.left && e.clientX <= rc.right && e.clientY >= rc.top && e.clientY <= rc.bottom) fillAt((e.clientX - rc.left) / rc.width * W, (e.clientY - rc.top) / rc.height * W);
+  }
+  if (ptrs.size === 0) gesture = null; else if (gesture && gesture.type === 'pinch') gesture = { type: 'idle' };
+};
+stage.addEventListener('pointerup', stEnd); stage.addEventListener('pointercancel', stEnd);
+
+/* ---------- photo of a colouring-book page → line art ---------- */
+$('photoIn').onchange = async () => {
+  const f = $('photoIn').files[0]; $('photoIn').value = ''; if (!f) return;
+  const busy = document.createElement('div'); busy.id = 'busy'; busy.textContent = 'चित्र तैयार हो रहा है… ✏️'; document.body.appendChild(busy);
+  try {
+    const url = URL.createObjectURL(f); const im = await loadImg(url); URL.revokeObjectURL(url);
+    busy.classList.add('hide');
+    const crop = await cropUI(im); if (!crop) { busy.remove(); return; }
+    busy.classList.remove('hide'); await new Promise(r => setTimeout(r, 50));
+    const png = photoToLineArt(im, crop);
+    const n = photos.length + 1, id = 'photo-' + Date.now();
+    await DB.put('photos', id, { id, name: 'मेरी फोटो ' + n, png, t: Date.now() });
+    await loadMeta(); curCat = 'photo'; LS.set('cat', curCat); renderChips(); renderGrid();
+    const p = catPages('photo').find(x => x.id === id); if (p) openPage(p, catPages('photo'));
+  } catch (e) { toast('फोटो नहीं खुली, दोबारा कोशिश करें'); }
+  busy.remove();
+};
+function cropUI(im) {
+  return new Promise(res => {
+    const m = document.createElement('div'); m.className = 'cropm';
+    m.innerHTML = '<div class="ch">✂️ सिर्फ़ चित्र वाला हिस्सा चुनें</div><div class="cw"><canvas></canvas><i data-h="0"></i><i data-h="1"></i><i data-h="2"></i><i data-h="3"></i></div><div class="btns"><button class="no">रद्द</button><button class="ok">✅ यही हिस्सा</button></div>';
+    document.body.appendChild(m);
+    const cv = m.querySelector('canvas'), cx = cv.getContext('2d'), wrap = m.querySelector('.cw');
+    const maxW = Math.min(window.innerWidth - 32, 700), maxH = window.innerHeight * 0.66, sc = Math.min(maxW / im.width, maxH / im.height);
+    const cw = Math.round(im.width * sc), chh = Math.round(im.height * sc);
+    cv.width = cw * 2; cv.height = chh * 2; cv.style.width = cw + 'px'; cv.style.height = chh + 'px'; wrap.style.width = cw + 'px'; wrap.style.height = chh + 'px';
+    let r = { x: cw * 0.06, y: chh * 0.06, w: cw * 0.88, h: chh * 0.88 };
+    const hs = [...m.querySelectorAll('.cw i')];
+    const draw = () => {
+      cx.setTransform(2, 0, 0, 2, 0, 0); cx.drawImage(im, 0, 0, cw, chh);
+      cx.fillStyle = 'rgba(20,18,40,.6)'; cx.beginPath(); cx.rect(0, 0, cw, chh); cx.rect(r.x, r.y + r.h, r.w, -r.h); cx.fill('evenodd');
+      cx.strokeStyle = '#fff'; cx.lineWidth = 2.5; cx.setLineDash([8, 6]); cx.strokeRect(r.x, r.y, r.w, r.h); cx.setLineDash([]);
+      [[r.x, r.y], [r.x + r.w, r.y], [r.x + r.w, r.y + r.h], [r.x, r.y + r.h]].forEach(([x, y], i) => { hs[i].style.left = x + 'px'; hs[i].style.top = y + 'px'; });
+    };
+    draw();
+    let drag = null;
+    wrap.addEventListener('pointerdown', e => {
+      const b = wrap.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
+      const h = e.target.dataset && e.target.dataset.h;
+      drag = { h: h !== undefined ? +h : (x > r.x && x < r.x + r.w && y > r.y && y < r.y + r.h ? 'move' : null), x, y, r0: { ...r } };
+      if (drag.h === null) drag = null; else try { wrap.setPointerCapture(e.pointerId); } catch (er) { }
+    });
+    wrap.addEventListener('pointermove', e => {
+      if (!drag) return; const b = wrap.getBoundingClientRect(), x = Math.max(0, Math.min(cw, e.clientX - b.left)), y = Math.max(0, Math.min(chh, e.clientY - b.top)), q = drag.r0, mn = 40;
+      if (drag.h === 'move') { r.x = Math.max(0, Math.min(cw - q.w, q.x + x - drag.x)); r.y = Math.max(0, Math.min(chh - q.h, q.y + y - drag.y)); }
+      else {
+        let x1 = q.x, y1 = q.y, x2 = q.x + q.w, y2 = q.y + q.h;
+        if (drag.h === 0 || drag.h === 3) x1 = Math.min(x, x2 - mn); else x2 = Math.max(x, x1 + mn);
+        if (drag.h === 0 || drag.h === 1) y1 = Math.min(y, y2 - mn); else y2 = Math.max(y, y1 + mn);
+        r = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+      }
+      draw();
+    });
+    wrap.addEventListener('pointerup', () => drag = null);
+    m.querySelector('.no').onclick = () => { m.remove(); res(null); };
+    m.querySelector('.ok').onclick = () => { m.remove(); res({ x: r.x / sc, y: r.y / sc, w: r.w / sc, h: r.h / sc }); };
+  });
+}
+function photoToLineArt(im, cr) {
+  cr = cr || { x: 0, y: 0, w: im.width, h: im.height };
+  const c = document.createElement('canvas'); c.width = c.height = W; const x = c.getContext('2d', { willReadFrequently: true });
+  x.fillStyle = '#fff'; x.fillRect(0, 0, W, W);
+  const s = Math.min((W - 40) / cr.w, (W - 40) / cr.h), w = cr.w * s, h = cr.h * s;
+  x.drawImage(im, cr.x, cr.y, cr.w, cr.h, (W - w) / 2, (W - h) / 2, w, h);
+  const id = x.getImageData(0, 0, W, W), d = id.data, g = new Float32Array(W * W), I = new Float64Array((W + 1) * (W + 1));
+  for (let i = 0, j = 0; i < W * W; i++, j += 4) g[i] = d[j] * 0.3 + d[j + 1] * 0.59 + d[j + 2] * 0.11;
+  for (let y = 0; y < W; y++) { let rs = 0; for (let xx = 0; xx < W; xx++) { rs += g[y * W + xx]; I[(y + 1) * (W + 1) + xx + 1] = I[y * (W + 1) + xx + 1] + rs; } }
+  const R = 18, out = new Uint8Array(W * W);
+  for (let y = 0; y < W; y++) for (let xx = 0; xx < W; xx++) {
+    const x0 = Math.max(0, xx - R), x1 = Math.min(W, xx + R + 1), y0 = Math.max(0, y - R), y1 = Math.min(W, y + R + 1);
+    const sum = I[y1 * (W + 1) + x1] - I[y0 * (W + 1) + x1] - I[y1 * (W + 1) + x0] + I[y0 * (W + 1) + x0], m = sum / ((x1 - x0) * (y1 - y0));
+    const v = g[y * W + xx]; out[y * W + xx] = (v < m - 16 && v < 205) ? 1 : 0;
+  }
+  // remove small specks (paper texture / noise)
+  const seen = new Uint8Array(W * W), st = new Int32Array(W * W), comp = new Int32Array(W * W);
+  for (let i = 0; i < W * W; i++) {
+    if (!out[i] || seen[i]) continue;
+    let sp = 0, n = 0; st[sp++] = i; seen[i] = 1;
+    while (sp) { const k = st[--sp]; comp[n++] = k; const y = (k / W) | 0, xx = k - y * W;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const yy = y + dy, x2 = xx + dx; if (yy < 0 || x2 < 0 || yy >= W || x2 >= W) continue; const q = yy * W + x2; if (out[q] && !seen[q]) { seen[q] = 1; st[sp++] = q; } } }
+    if (n < 40) for (let q = 0; q < n; q++) out[comp[q]] = 0;
+  }
+  // thicken lines by 1px so small gaps close
+  for (let i = 0, j = 0; i < W * W; i++, j += 4) {
+    const y = (i / W) | 0, xx = i - y * W;
+    const b = out[i] || (xx > 0 && out[i - 1]) || (xx < W - 1 && out[i + 1]) || (y > 0 && out[i - W]) || (y < W - 1 && out[i + W]);
+    const v = b ? 43 : 255; d[j] = d[j + 1] = d[j + 2] = v; d[j + 3] = 255;
+  }
+  x.putImageData(id, 0, 0);
+  x.strokeStyle = '#2b2b2b'; x.lineWidth = 6; x.strokeRect((W - w) / 2, (W - h) / 2, w, h);
+  return c.toDataURL('image/png');
+}
+
+/* ---------- start ---------- */
+(async () => {
+  await loadMeta(); renderChips(); renderGrid();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });
+})();
+
+</script>
+</body>
+</html>
